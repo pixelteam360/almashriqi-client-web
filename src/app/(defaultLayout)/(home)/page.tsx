@@ -1,7 +1,9 @@
+import CommonHome from "@/components/modules/Home/CommonHome";
+
 const CommonLayoutHomePage = () => {
   return (
     <div>
-      <h1>Home</h1>
+      <CommonHome />
     </div>
   );
 };

@@ -1,5 +1,5 @@
 "use client";
-import logo from "../../../public/images/loginregister.png";
+import logo from "../../assets/images/logo.png";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -14,16 +14,12 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import MyBtn from "../common/MyBtn";
 // import { useGetMeQuery } from "@/redux/features/auth/authApi";
 // import { useAppDispatch } from "@/redux/hooks";
 // import { logout } from "@/redux/features/auth/authSlice";
 // import { removeCookie } from "@/utils/cookies";
-import { IoIosNotificationsOutline } from "react-icons/io";
-import MyFormWrapper from "../form/MyFormWrapper";
-import MyFormInput from "../form/MyFormInput";
-import { CiSearch } from "react-icons/ci";
 // import { TbAdjustments } from "react-icons/tb";
-import { FieldValues } from "react-hook-form";
 
 const Navbar = () => {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
@@ -32,30 +28,37 @@ const Navbar = () => {
   // const { data } = useGetMeQuery(undefined);
   // const router = useRouter();
 
-  // const userData = data?.data;
+  const userData = false;
 
   const navLinks = [
     {
       path: "/",
-      name: "Properties",
+      name: "Home",
     },
     {
-      path: "/contact",
-      name: "Contact",
+      path: "/services",
+      name: "Services",
     },
     {
-      path: "/setting",
-      name: "Setting",
+      path: "/about-us",
+      name: "About Us",
+    },
+    {
+      path: "/terms-privacy",
+      name: "Terms & Privacy",
+    },
+    {
+      path: "/FAQ",
+      name: "FAQ",
+    },
+    {
+      path: "/contact-us",
+      name: "Contact Us",
     },
   ];
 
   const handleNavLinkClick = () => {
     setIsSheetOpen(false);
-  };
-
-  // handle search
-  const handleSearch = (data: FieldValues) => {
-    console.log(data);
   };
 
   // const handleLolgout = () => {
@@ -65,9 +68,9 @@ const Navbar = () => {
   // };
 
   return (
-    <div className="bg-white w-full mb-5 px-5 flex justify-between items-center gap-5 shadow-md shadow-gray-300">
+    <div className="w-full mb-5 flex justify-between items-center gap-3">
       {/* small device menu */}
-      <div className="md:hidden mt-2">
+      <div className="lg:hidden mt-2">
         <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
           <SheetTrigger>
             <HiMenuAlt1 className="text-2xl cursor-pointer text-primary" />
@@ -85,9 +88,9 @@ const Navbar = () => {
                     href={`${link.path}`}
                     className={`${
                       pathName === `${link.path}`
-                        ? "bg-primary text-black px-5 py-2 rounded-3xl"
-                        : "text-black"
-                    } hover:bg-primary hover:text-black px-5 py-2 rounded-3xl duration-300`}
+                        ? " text-black px-5 py-2 rounded-3xl"
+                        : "text-[#525050]"
+                    }  hover:text-black px-5 py-2 rounded-3xl duration-300`}
                     onClick={handleNavLinkClick}
                   >
                     {link.name}
@@ -96,7 +99,10 @@ const Navbar = () => {
               </ul>
             </nav>
             <SheetClose asChild>
-              <Button variant="outline" className="mt-5 w-full bg-primary">
+              <Button
+                variant="outline"
+                className="mt-5 w-full bg-primary text-white hover:bg-secondary hover:text-white"
+              >
                 Close
               </Button>
             </SheetClose>
@@ -110,50 +116,32 @@ const Navbar = () => {
           height={120}
           width={300}
           alt="logo"
-          className="md:w-52 w-28"
+          className="md:w-32 w-20"
         />
-
-        <div className={`${pathName !== "/" ? "hidden pt-3" : "pt-3"}`}>
-          <MyFormWrapper onSubmit={handleSearch}>
-            <div className="relative">
-              <MyFormInput
-                name="search"
-                type="text"
-                inputClassName="rounded-full px-10"
-                placeholder="Search property"
-              />
-              <CiSearch className="absolute top-3 left-3 text-2xl" />
-            </div>
-          </MyFormWrapper>
-        </div>
       </div>
 
       {/* larg device menu  */}
-      <div className="md:flex hidden items-center gap-7 ">
-        <ul className="lg:space-x-5 space-x-2">
+      <div className="lg:flex hidden items-center">
+        <ul className=" space-x-2 w-full">
           {navLinks.map((link) => (
             <Link
               key={link.path}
               href={`${link.path}`}
               className={`${
                 pathName === `${link.path}`
-                  ? "bg-secondary text-primary px-5 py-2 rounded-3xl"
-                  : "text-black"
-              } hover:bg-secondary hover:text-primary px-5 py-2 rounded-3xl duration-300`}
+                  ? "text-black rounded-3xl"
+                  : "text-[#525050]"
+              }  hover:text-black xl:px-4 px-2 py-2 rounded-3xl duration-300`}
             >
               {link.name}
             </Link>
           ))}
         </ul>
-
-        <div className="">
-          <IoIosNotificationsOutline className="text-2xl" />
-        </div>
       </div>
 
-      {/* {userData ? (
+      {userData ? (
         <div className="flex gap-3">
-          <div className=" flex gap-2 items-center md:px-4 px-2 md:py-2 py-[2px] rounded-full bg-white">
+          {/* <div className=" flex gap-2 items-center md:px-4 px-2 md:py-2 py-[2px] rounded-full bg-white">
             {userData?.profileImage ? (
               <Image
                 src={userData?.profileImage}
@@ -168,21 +156,29 @@ const Navbar = () => {
               <p className="text-sm">{userData?.fullName}</p>
               <p className="font-medium text-sm">{userData?.role}</p>
             </div>
-          </div>
+          </div> */}
           <button
-            onClick={handleLolgout}
-            className="bg-primary px-8 py-3 rounded-full hover:bg-white duration-300"
+            // onClick={handleLolgout}
+            className="bg-primary border border-primary px-12 py-3 rounded-lg duration-300 text-white font-medium"
           >
-            Logout
+            Log Out
           </button>
         </div>
       ) : (
-        <Link href={"/login"}>
-          <button className="bg-primary px-8 py-3 rounded-full hover:bg-white duration-300">
-            Login
-          </button>
-        </Link>
-      )} */}
+        <div className="flex gap-7">
+          <Link href={"/register"}>
+            <button
+              // onClick={handleLolgout}
+              className="border border-primary px-10 py-3 rounded-lg hover:bg-white duration-300 text-primary font-medium"
+            >
+              Sign Up
+            </button>
+          </Link>
+          <Link href={"/login"}>
+            <MyBtn name="Log In" />
+          </Link>
+        </div>
+      )}
     </div>
   );
 };
