@@ -46,7 +46,7 @@ const Banner = () => {
               inputClassName="border !border-[#2C2D5B] !rounded-2xl bg-white py-7 !text-sm px-7"
               placeholder="enter Postcode"
             />
-            <MapPin className="absolute top-7 left-[3px] text-primary" />
+            <MapPin className="absolute top-7 left-[3px] text-primary w-5" />
           </div>
           <div className="relative">
             <p className="absolute -top-3 left-3 z-10 bg-white px-2">
@@ -57,7 +57,7 @@ const Banner = () => {
               inputClassName="border !border-[#2C2D5B] !rounded-2xl bg-white py-7 !text-sm px-7"
               placeholder="enter Postcode"
             />
-            <MapPin className="absolute top-7 left-[3px] text-primary" />
+            <MapPin className="absolute top-7 left-[3px] text-primary w-5" />
           </div>
           <div className="relative">
             <p className="absolute -top-3 left-3 z-10 bg-white px-2">weight</p>
@@ -66,7 +66,7 @@ const Banner = () => {
               inputClassName="border !border-[#2C2D5B] !rounded-2xl bg-white py-7 !text-sm px-7"
               placeholder="weight (KG)"
             />
-            <Weight className="absolute top-7 left-[3px] text-primary" />
+            <Weight className="absolute top-7 left-[3px] text-primary w-5" />
           </div>
           <div className="relative">
             <p className="absolute -top-3 left-3 z-10 bg-white px-2">time</p>
@@ -75,20 +75,20 @@ const Banner = () => {
               inputClassName="border !border-[#2C2D5B] !rounded-2xl bg-white py-7 !text-sm px-7"
               placeholder="hour"
             />
-            <AlarmClock className="absolute top-7 left-[3px] text-primary" />
+            <AlarmClock className="absolute top-7 left-[3px] text-primary w-5" />
           </div>
-          <div className="relative">
+          <div className="relative ">
             <p className="absolute -top-3 left-3 z-10 bg-white px-2">Service</p>
             <MyFormSelect
               name="name"
               options={[]}
-              selectClassName="border !border-[#2C2D5B] !rounded-2xl bg-white py-7 px-7"
+              selectClassName="border !border-[#2C2D5B] !rounded-2xl bg-white py-7 w-44 px-7 text-sm text-gray-400"
             />
-            <CarFront className="absolute top-7 left-[3px] text-primary" />
+            <CarFront className="absolute top-7 left-[3px] text-primary w-5" />
           </div>
 
           <div className="inline-block">
-            <button className="px-16 py-4 bg-primary rounded-2xl text-white font-bold">
+            <button className="px-16 whitespace-nowrap py-7 bg-primary rounded-2xl text-white font-bold">
               check price
             </button>
           </div>
