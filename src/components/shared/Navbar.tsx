@@ -4,17 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { HiMenuAlt1 } from "react-icons/hi";
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useState } from "react";
-import MyBtn from "../common/MyBtn";
 // import { useGetMeQuery } from "@/redux/features/auth/authApi";
 // import { useAppDispatch } from "@/redux/hooks";
 // import { logout } from "@/redux/features/auth/authSlice";
@@ -48,7 +39,7 @@ const Navbar = () => {
       name: "Terms & Privacy",
     },
     {
-      path: "/FAQ",
+      path: "/faq",
       name: "FAQ",
     },
     {
@@ -76,10 +67,6 @@ const Navbar = () => {
             <HiMenuAlt1 className="text-2xl cursor-pointer text-primary" />
           </SheetTrigger>
           <SheetContent side="left" className=" ">
-            <SheetHeader>
-              <SheetTitle className="text-lg">Navigation</SheetTitle>
-            </SheetHeader>
-
             <nav className="mt-5">
               <ul className="space-y-2 flex flex-col z-40">
                 {navLinks.map((link) => (
@@ -88,24 +75,56 @@ const Navbar = () => {
                     href={`${link.path}`}
                     className={`${
                       pathName === `${link.path}`
-                        ? " text-black px-5 py-2 rounded-3xl"
+                        ? " text-black  py-2 rounded-3xl"
                         : "text-[#525050]"
-                    }  hover:text-black px-5 py-2 rounded-3xl duration-300`}
+                    }  hover:text-black  py-2 rounded-3xl duration-300`}
                     onClick={handleNavLinkClick}
                   >
                     {link.name}
                   </Link>
                 ))}
               </ul>
+
+              <div className="w-full mt-8">
+                {userData ? (
+                  <div className="flex gap-3">
+                    <button
+                      // onClick={handleLolgout}
+                      className="bg-primary border border-primary md:px-12 px-6 md:py-3 py-1 whitespace-nowrap rounded-lg duration-300 text-white font-medium"
+                    >
+                      Log Out
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex md:gap-7 gap-1 w-full">
+                    <Link href={"/register"}>
+                      <button
+                        // onClick={handleLolgout}
+                        className="border border-primary px-5 md:py-3 py-1 whitespace-nowrap rounded-lg hover:bg-white duration-300 text-primary font-medium"
+                      >
+                        Sign Up
+                      </button>
+                    </Link>
+                    <Link href={"/login"}>
+                      <button
+                        // onClick={handleLolgout}
+                        className=" bg-primary text-white border border-primary  px-6 md:py-3 py-1 whitespace-nowrap rounded-lg hover:bg-white duration-300 font-medium"
+                      >
+                        Log In
+                      </button>
+                    </Link>
+                  </div>
+                )}
+              </div>
             </nav>
-            <SheetClose asChild>
+            {/* <SheetClose asChild>
               <Button
                 variant="outline"
                 className="mt-5 w-full bg-primary text-white hover:bg-secondary hover:text-white"
               >
                 Close
               </Button>
-            </SheetClose>
+            </SheetClose> */}
           </SheetContent>
         </Sheet>
       </div>
@@ -116,7 +135,7 @@ const Navbar = () => {
           height={120}
           width={300}
           alt="logo"
-          className="md:w-32 w-20"
+          className="md:w-32 w-28"
         />
       </div>
 
@@ -140,7 +159,7 @@ const Navbar = () => {
       </div>
 
       {userData ? (
-        <div className="flex gap-3">
+        <div className="md:flex hidden gap-3">
           {/* <div className=" flex gap-2 items-center md:px-4 px-2 md:py-2 py-[2px] rounded-full bg-white">
             {userData?.profileImage ? (
               <Image
@@ -159,23 +178,28 @@ const Navbar = () => {
           </div> */}
           <button
             // onClick={handleLolgout}
-            className="bg-primary border border-primary px-12 py-3 rounded-lg duration-300 text-white font-medium"
+            className="bg-primary border border-primary md:px-12 px-6 md:py-3 py-1 whitespace-nowrap rounded-lg duration-300 text-white font-medium"
           >
             Log Out
           </button>
         </div>
       ) : (
-        <div className="flex gap-7">
+        <div className="md:flex hidden md:gap-7 gap-1">
           <Link href={"/register"}>
             <button
               // onClick={handleLolgout}
-              className="border border-primary px-10 py-3 rounded-lg hover:bg-white duration-300 text-primary font-medium"
+              className="border border-primary md:px-12 px-3 md:py-3 py-1 whitespace-nowrap rounded-lg hover:bg-white duration-300 text-primary font-medium"
             >
               Sign Up
             </button>
           </Link>
           <Link href={"/login"}>
-            <MyBtn name="Log In" />
+            <button
+              // onClick={handleLolgout}
+              className="bg-primary text-white border border-primary md:px-12 px-3 md:py-3 py-1 whitespace-nowrap rounded-lg hover:bg-secondary duration-300 font-medium"
+            >
+              Sign Up
+            </button>
           </Link>
         </div>
       )}

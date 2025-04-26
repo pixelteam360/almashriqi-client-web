@@ -11,7 +11,7 @@ import MyBtn from "@/components/common/MyBtn";
 const Service = () => {
   return (
     <div className="space-y-20">
-      <div className="flex justify-between items-center">
+      <div className="flex md:flex-row flex-col-reverse md:gap-3 gap-2 justify-between items-center">
         <SectionTitle main="Services" sub="we offer" />
 
         <Image src={carLogo} alt="logo" height={150} width={150} />
@@ -27,7 +27,7 @@ const Service = () => {
             className="w-full h-48"
           />
           <MyTitle title="Moto bike" />
-          <p className="text-[#525050]">
+          <p className="text-[#525050] md:text-start text-center">
             Quick and nimble deliveries for urgent needs. Perfect for small
             packages and last-mile logistics.
           </p>
@@ -41,7 +41,7 @@ const Service = () => {
             className="w-full h-48"
           />
           <MyTitle title="Car" />
-          <p className="text-[#525050]">
+          <p className="text-[#525050] md:text-start text-center">
             Ideal for envelopes, packages, small parcels and non palletised
             items. Max total carrying weight of combined multiple items: 50 kg
             (no single item should be more than 50kg).
@@ -56,7 +56,7 @@ const Service = () => {
             className="w-full h-48"
           />
           <MyTitle title="Small Van" />
-          <p className="text-[#525050]">
+          <p className="text-[#525050] md:text-start text-center">
             Load length 1.4m, Width 1.2m, Height 1.1m. Max Load 400kg - 1
             Pallet.
           </p>
@@ -70,7 +70,7 @@ const Service = () => {
             className="w-full h-48"
           />
           <MyTitle title="Medium Van" />
-          <p className="text-[#525050]">
+          <p className="text-[#525050] md:text-start text-center">
             Load length 2m, Width 1.25m, Height 1.4m. Max Load 800kg - 2
             Standard Pallets. / 2 Euro Pallets.
           </p>
@@ -79,7 +79,7 @@ const Service = () => {
 
       <div className=" md:w-2/3 space-y-4">
         <MyTitle title="Medical & Healthcare Deliveries" />
-        <p className="text-lg font-semibold text-[#525050]">
+        <p className="text-lg font-semibold text-[#525050] md:text-start text-center">
           Sensitive, time-critical deliveries handled with care. Our trained
           drivers manage medical equipment, lab samples, and pharmacy items with
           confidentiality and precision.
@@ -90,7 +90,7 @@ const Service = () => {
         <div className="md:w-1/3"></div>
         <div className="md:w-2/3">
           <MyTitle title="Custom & Multi-Stop Services" />
-          <p className="text-lg font-semibold text-[#525050]">
+          <p className="text-lg font-semibold text-[#525050] md:text-start text-center">
             Have something unique? Need multiple drops in one route? We offer
             flexible delivery options to meet your specific needs.
           </p>

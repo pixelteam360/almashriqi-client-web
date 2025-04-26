@@ -16,7 +16,7 @@ const FAQ = () => {
     <div>
       <MyTitle title="Frequently Asked Questions" />
 
-      <div className="flex md:mt-24 mt-20">
+      <div className="md:flex md:mt-24 mt-20">
         <div className="md:w-1/2 z-10">
           {faqData.map((item: TFaqData) => (
             <div
@@ -34,16 +34,18 @@ const FAQ = () => {
                 ></span>
                 {item.question}
               </div>
-              <ChevronRight className={`${
-                    answer.id === item.id ? "text-primary" : "text-[#BCDAE9]"
-                  }`} />
+              <ChevronRight
+                className={`${
+                  answer.id === item.id ? "text-primary" : "text-[#BCDAE9]"
+                }`}
+              />
             </div>
           ))}
         </div>
 
-        <div className="md:w-1/2  p-8 -ml-24 relative">
-          <div className="absolute w-full h-[120%]  bg-[#F6F6F6] -top-[10%] border-2 rounded-xl -z-10"></div>
-          <div className="md:w-4/5 ml-auto space-y-12 ">
+        <div className="md:w-1/2  p-8 md:-ml-24 relative">
+          <div className="absolute w-full h-[120%]  bg-[#F6F6F6] -top-[10%] left-0 border-2 rounded-xl -z-10"></div>
+          <div className="md:w-4/5 md:ml-auto space-y-12 ">
             <p className="font-bold text-lg">{answer.question}</p>
             <p>{answer.answer}</p>
           </div>

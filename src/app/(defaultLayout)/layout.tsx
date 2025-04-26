@@ -1,4 +1,5 @@
 import MyContainer from "@/components/common/MyContainer";
+import FooterBar from "@/components/shared/FooterBar";
 import Navbar from "@/components/shared/Navbar";
 import { Metadata } from "next";
 
@@ -18,6 +19,9 @@ const CommonLayout = ({ children }: { children: React.ReactNode }) => {
           {children}
         </div>
       </MyContainer>
+      <footer>
+        <FooterBar />
+      </footer>
     </main>
   );
 };

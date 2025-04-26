@@ -15,18 +15,20 @@ const Banner = () => {
   };
   return (
     <div className="">
-      <div className="flex items-center gap-7 md:mb-24 mb-10">
+      <div className="flex md:flex-row flex-col-reverse items-center gap-7 md:mb-24 mb-10">
         <div className="md:w-3/5 space-y-6">
-          <h1 className="md:text-5xl text-2xl md:font-semibold font-medium text-secondary leading-snug md:leading-[4.2rem]">
+          <h1 className="md:text-5xl text-2xl md:text-start text-center md:font-semibold font-medium text-secondary leading-snug md:leading-[4.2rem]">
             Need To Send Or Receive A Parcel Quickly? Choose Us For Fast And
             Reliable Service!
           </h1>
-          <p>
+          <p className="md:text-start text-center">
             Experience the perfect blend of speed, safety, and satisfaction—your
             parcels delivered right to your doorstep.
           </p>
 
-          <MyBtn name="Download App" />
+          <div className="md:text-start text-center">
+            <MyBtn name="Download App" />
+          </div>
         </div>
 
         <div className="md:w-2/5">
@@ -82,7 +84,7 @@ const Banner = () => {
             <MyFormSelect
               name="name"
               options={[]}
-              selectClassName="border !border-[#2C2D5B] !rounded-2xl bg-white py-7 w-44 px-7 text-sm text-gray-400"
+              selectClassName="border !border-[#2C2D5B] !rounded-2xl bg-white py-7 md:w-44 w-52 px-7 text-sm text-gray-400"
             />
             <CarFront className="absolute top-7 left-[3px] text-primary w-5" />
           </div>

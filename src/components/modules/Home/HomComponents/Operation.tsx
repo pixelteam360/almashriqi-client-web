@@ -11,7 +11,7 @@ import MyTitle from "@/components/common/MyTitle";
 const Operation = () => {
   return (
     <div>
-      <div className="flex justify-between items-center">
+      <div className="flex md:flex-row flex-col md:gap-3 gap-2 justify-between items-center">
         <Image src={carLogo} alt="logo" height={150} width={150} />
         <SectionTitle main="Operation" sub="Mode" />
         <div></div>
@@ -19,7 +19,7 @@ const Operation = () => {
 
       <div className="grid md:grid-cols-2 md:gap-12 gap-6 md:mt-24 mt-10 items-center">
         <div className="md:w-3/5 mx-auto md:space-y-8 space-y-5">
-          <div className="flex gap-5">
+          <div className="flex gap-5 items-center">
             <h2 className="w-12 h-12 rounded-full bg-primary flex justify-center items-center text-2xl text-white">
               1
             </h2>
@@ -60,7 +60,7 @@ const Operation = () => {
             className="absolute z-10 -top-[250px] -left-full w-full h-full "
           />
 
-          <div className="flex gap-5">
+          <div className="flex gap-5 items-center">
             <h2 className="w-12 h-12 rounded-full bg-primary flex justify-center items-center text-2xl text-white">
               2
             </h2>
@@ -81,7 +81,7 @@ const Operation = () => {
         </div>
 
         <div className="md:w-3/5 mx-auto md:space-y-8 space-y-5">
-          <div className="flex gap-5">
+          <div className="flex gap-5 items-center">
             <h2 className="w-12 h-12 rounded-full bg-primary flex justify-center items-center text-2xl text-white">
               3
             </h2>
