@@ -1,7 +1,11 @@
-export default function Page() {
+import LoginForm from "@/components/modules/Auth/LoginForm";
+
+const page = () => {
   return (
-    <div>
-      <h1>Login</h1>
+    <div className="bg-white">
+      <LoginForm />
     </div>
   );
-}
+};
+
+export default page;

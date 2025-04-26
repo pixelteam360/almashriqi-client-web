@@ -2,24 +2,22 @@
 import logo from "../../assets/images/logo.png";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { HiMenuAlt1 } from "react-icons/hi";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useState } from "react";
-// import { useGetMeQuery } from "@/redux/features/auth/authApi";
-// import { useAppDispatch } from "@/redux/hooks";
-// import { logout } from "@/redux/features/auth/authSlice";
-// import { removeCookie } from "@/utils/cookies";
-// import { TbAdjustments } from "react-icons/tb";
+import { useAppDispatch } from "@/redux/hooks";
+import { useGetMeQuery } from "@/redux/features/auth/authApi";
+import { logout } from "@/redux/features/auth/authSlice";
+import { removeCookie } from "@/utils/cookies";
 
 const Navbar = () => {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const pathName = usePathname();
-  // const dispatch = useAppDispatch();
-  // const { data } = useGetMeQuery(undefined);
-  // const router = useRouter();
-
-  const userData = false;
+  const dispatch = useAppDispatch();
+  const { data } = useGetMeQuery(undefined);
+  const router = useRouter();
+  const userData = data?.data;
 
   const navLinks = [
     {
@@ -52,11 +50,11 @@ const Navbar = () => {
     setIsSheetOpen(false);
   };
 
-  // const handleLolgout = () => {
-  //   dispatch(logout());
-  //   removeCookie("token");
-  //   router.push("/login");
-  // };
+  const handleLolgout = () => {
+    dispatch(logout());
+    removeCookie("token");
+    router.push("/login");
+  };
 
   return (
     <div className="w-full mb-5 flex justify-between items-center gap-3">
@@ -67,6 +65,9 @@ const Navbar = () => {
             <HiMenuAlt1 className="text-2xl cursor-pointer text-primary" />
           </SheetTrigger>
           <SheetContent side="left" className=" ">
+          <SheetHeader>
+              <SheetTitle className="text-lg"></SheetTitle>
+            </SheetHeader>
             <nav className="mt-5">
               <ul className="space-y-2 flex flex-col z-40">
                 {navLinks.map((link) => (
@@ -89,7 +90,7 @@ const Navbar = () => {
                 {userData ? (
                   <div className="flex gap-3">
                     <button
-                      // onClick={handleLolgout}
+                      onClick={handleLolgout}
                       className="bg-primary border border-primary md:px-12 px-6 md:py-3 py-1 whitespace-nowrap rounded-lg duration-300 text-white font-medium"
                     >
                       Log Out
@@ -99,7 +100,6 @@ const Navbar = () => {
                   <div className="flex md:gap-7 gap-1 w-full">
                     <Link href={"/register"}>
                       <button
-                        // onClick={handleLolgout}
                         className="border border-primary px-5 md:py-3 py-1 whitespace-nowrap rounded-lg hover:bg-white duration-300 text-primary font-medium"
                       >
                         Sign Up
@@ -107,7 +107,6 @@ const Navbar = () => {
                     </Link>
                     <Link href={"/login"}>
                       <button
-                        // onClick={handleLolgout}
                         className=" bg-primary text-white border border-primary  px-6 md:py-3 py-1 whitespace-nowrap rounded-lg hover:bg-white duration-300 font-medium"
                       >
                         Log In
@@ -117,14 +116,6 @@ const Navbar = () => {
                 )}
               </div>
             </nav>
-            {/* <SheetClose asChild>
-              <Button
-                variant="outline"
-                className="mt-5 w-full bg-primary text-white hover:bg-secondary hover:text-white"
-              >
-                Close
-              </Button>
-            </SheetClose> */}
           </SheetContent>
         </Sheet>
       </div>
@@ -177,7 +168,7 @@ const Navbar = () => {
             </div>
           </div> */}
           <button
-            // onClick={handleLolgout}
+            onClick={handleLolgout}
             className="bg-primary border border-primary md:px-12 px-6 md:py-3 py-1 whitespace-nowrap rounded-lg duration-300 text-white font-medium"
           >
             Log Out
@@ -186,19 +177,13 @@ const Navbar = () => {
       ) : (
         <div className="md:flex hidden md:gap-7 gap-1">
           <Link href={"/register"}>
-            <button
-              // onClick={handleLolgout}
-              className="border border-primary md:px-12 px-3 md:py-3 py-1 whitespace-nowrap rounded-lg hover:bg-white duration-300 text-primary font-medium"
-            >
+            <button className="border border-primary md:px-12 px-3 md:py-3 py-1 whitespace-nowrap rounded-lg hover:bg-white duration-300 text-primary font-medium">
               Sign Up
             </button>
           </Link>
           <Link href={"/login"}>
-            <button
-              // onClick={handleLolgout}
-              className="bg-primary text-white border border-primary md:px-12 px-3 md:py-3 py-1 whitespace-nowrap rounded-lg hover:bg-secondary duration-300 font-medium"
-            >
-              Sign Up
+            <button className="bg-primary text-white border border-primary md:px-12 px-3 md:py-3 py-1 whitespace-nowrap rounded-lg hover:bg-secondary duration-300 font-medium">
+              Log In
             </button>
           </Link>
         </div>

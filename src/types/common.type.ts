@@ -3,3 +3,9 @@ export type TFaqData = {
   question: string;
   answer: string;
 };
+
+export type TOptions = {
+  label: string;
+  keyOption: string;
+  value: string;
+};

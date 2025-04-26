@@ -1,7 +1,13 @@
-export default function Page() {
+
+import RegisterForm from '@/components/modules/Auth/RegisterForm';
+import React from 'react';
+
+const page = () => {
   return (
-    <div>
-      <h1>Register</h1>
+    <div className='bg-white'>
+      <RegisterForm />
     </div>
   );
-}
+};
+
+export default page;

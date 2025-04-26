@@ -69,7 +69,7 @@ const MyFormSelect = ({
               onFocus={() => setIsOpen(true)}
               onBlur={() => setIsOpen(false)}
               className={cn(
-                "w-full  px-4 py-2 border rounded-md focus:outline-none focus:ring-2 appearance-none",
+                "w-full px-4 py-3 md:text-[17px] rounded-md focus:outline-none bg-[#f5f7f9] focus:ring-2 appearance-none text-gray-600",
                 "transition-all ease-in-out ",
                 error ? "border-danger" : "border-gray-300",
                 selectClassName

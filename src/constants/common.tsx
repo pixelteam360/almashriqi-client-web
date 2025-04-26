@@ -30,3 +30,49 @@ export const faqData = [
       "Yes. We can arrange evening and weekend deliveries by request. After-hours bookings may include an additional surcharge.",
   },
 ];
+
+export const userOptions = [
+  {
+    label: "User",
+    keyOption: "001",
+    value: "USER",
+  },
+  {
+    label: "Merchant",
+    keyOption: "002",
+    value: "MERCHANT",
+  },
+  {
+    label: "Rider",
+    keyOption: "003",
+    value: "DELIVERYPERSON",
+  },
+  {
+    label: "Warehouse",
+    keyOption: "004",
+    value: "WAREHOUSE",
+  },
+];
+
+export const serviceType = [
+  {
+    label: "Motorbike",
+    keyOption: "001",
+    value: "Motorbike",
+  },
+  {
+    label: "Car",
+    keyOption: "002",
+    value: "Car",
+  },
+  {
+    label: "Small Van",
+    keyOption: "003",
+    value: "Small Van",
+  },
+  {
+    label: "Medium Van",
+    keyOption: "004",
+    value: "Medium Van",
+  },
+];

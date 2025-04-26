@@ -8,6 +8,7 @@ import MyFormInput from "@/components/form/MyFormInput";
 import { FieldValues } from "react-hook-form";
 import MyFormSelect from "@/components/form/MyFormSelect";
 import { AlarmClock, CarFront, MapPin, Weight } from "lucide-react";
+import { serviceType } from "@/constants/common";
 
 const Banner = () => {
   const handleSubmit = (data: FieldValues) => {
@@ -83,7 +84,7 @@ const Banner = () => {
             <p className="absolute -top-3 left-3 z-10 bg-white px-2">Service</p>
             <MyFormSelect
               name="name"
-              options={[]}
+              options={serviceType}
               selectClassName="border !border-[#2C2D5B] !rounded-2xl bg-white py-7 md:w-44 w-52 px-7 text-sm text-gray-400"
             />
             <CarFront className="absolute top-7 left-[3px] text-primary w-5" />

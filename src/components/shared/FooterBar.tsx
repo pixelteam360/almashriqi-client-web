@@ -49,7 +49,7 @@ const FooterBar = () => {
           <div className="space-y-6">
             <h2 className="text-lg font-bold">Social Media</h2>
 
-            <ul className="flex gap-2">
+            <ul className="flex gap-4">
               <Link href={""}>
                 <FaFacebookF className="w-12 h-12 rounded-full bg-white text-primary p-3" />{" "}
               </Link>

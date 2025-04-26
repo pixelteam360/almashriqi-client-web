@@ -6,7 +6,7 @@ import MyBtn from "@/components/common/MyBtn";
 const Warehouse = () => {
   return (
     <div className="space-y-20 bg-[#f7f7f7] my:mp-20 py-12 ">
-      <div className="text-center">
+      <div className="flex justify-center">
         <SectionTitle main="Warehouse" sub="Onsite" />
       </div>
 
