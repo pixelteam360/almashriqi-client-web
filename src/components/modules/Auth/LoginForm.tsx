@@ -56,7 +56,7 @@ const LoginForm = () => {
           <MyFormInput name="email" type="email" label="Email" />
           <MyFormInput name="password" type="password" label="Password" />
           <div className="flex justify-end mb-5">
-            <Link href={""} className="text-primary font-semibold ">
+            <Link href={"forgot-password"} className="text-primary font-semibold ">
               Forgot password?
             </Link>
           </div>

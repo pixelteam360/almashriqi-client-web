@@ -30,10 +30,10 @@ const FooterBar = () => {
             <h2 className="text-lg font-bold">Explore</h2>
 
             <ul className="flex flex-col gap-1">
-              <Link href={""}>Services</Link>
-              <Link href={""}>About Us</Link>
-              <Link href={""}>Contact Us</Link>
-              <Link href={""}>FAQ</Link>
+              <Link href={"/services"}>Services</Link>
+              <Link href={"/about-us"}>About Us</Link>
+              <Link href={"/contact-us"}>Contact Us</Link>
+              <Link href={"/faq"}>FAQ</Link>
             </ul>
           </div>
 
@@ -41,8 +41,9 @@ const FooterBar = () => {
             <h2 className="text-lg font-bold">Legal</h2>
 
             <ul className="flex flex-col gap-1">
-              <Link href={""}>Terms</Link>
-              <Link href={""}>Privacy</Link>
+              <Link href={"/terms-privacy"}>Terms & Conditions</Link>
+              <Link href={"/privacy-policy"}>Privacy Policy</Link>
+              <Link href={"/driver-privacy-policy"}>Driver Privacy Policy</Link>
             </ul>
           </div>
 
