@@ -20,7 +20,8 @@ const FooterBar = () => {
               </p>
               <p>Company Number: 13665172</p>
               <p>Email: info@runcourier.co.uk</p>
-              <p>Phone : +44 7311 121217</p>
+              <p>Phone: +44 7311 121217</p>
+              <p>Phone: +44 7862 771999</p>
               <p>112 Bridgwater Road</p>
               <p>HA4 6LW Ruislip London</p>
             </div>
@@ -54,7 +55,7 @@ const FooterBar = () => {
               <Link href={""}>
                 <FaFacebookF className="w-12 h-12 rounded-full bg-white text-primary p-3" />{" "}
               </Link>
-              <Link href={""}>
+              <Link href={"https://wa.me/447311121217"} target="_blank">
                 <FaTwitter className="w-12 h-12 rounded-full bg-white text-primary p-3" />
               </Link>
               <Link href={""}>
