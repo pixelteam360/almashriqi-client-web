@@ -1,5 +1,5 @@
 "use client";
-import logo from "../../assets/images/logo.png";
+import logo from "../../assets/images/run-courier.png";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -126,7 +126,7 @@ const Navbar = () => {
           height={120}
           width={300}
           alt="logo"
-          className="md:w-32 w-28"
+          className="md:w-28 w-14"
         />
       </div>
 
