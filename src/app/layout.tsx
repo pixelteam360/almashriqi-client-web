@@ -10,8 +10,8 @@ const lato = Lato({
 });
 
 export const metadata: Metadata = {
-  title: "Starter kit",
-  description: "starter kit for nextjs with redux with persist",
+  title: "Run Courier",
+  description: "Run Courier",
 };
 
 export default function RootLayout({

@@ -4,8 +4,8 @@ import Navbar from "@/components/shared/Navbar";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Insightify",
-  description: "Transform Voice, Images, and Videos into Text",
+  title: "Run Courier",
+  description: "Run Courier",
 };
 
 const CommonLayout = ({ children }: { children: React.ReactNode }) => {
