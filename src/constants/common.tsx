@@ -25,10 +25,16 @@ export const faqData = [
   },
   {
     id: "005",
-    question: "Are you available outside business hours?",
+    question: "How long will it take to collect my parcel?",
     answer:
-      "Yes. We can arrange evening and weekend deliveries by request. After-hours bookings may include an additional surcharge.",
+      "We typically collect parcels within 30 to 90 minutes from the time your booking is confirmed. Our team works hard to ensure fast, same-day pickups across London and the Uk",
   },
+  // {
+  //   id: "005",
+  //   question: "Are you available outside business hours?",
+  //   answer:
+  //     "Yes. We can arrange evening and weekend deliveries by request. After-hours bookings may include an additional surcharge.",
+  // },
 ];
 
 export const userOptions = [

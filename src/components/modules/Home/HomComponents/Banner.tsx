@@ -9,26 +9,26 @@ import { FieldValues } from "react-hook-form";
 import MyFormSelect from "@/components/form/MyFormSelect";
 import { AlarmClock, CarFront, MapPin, Weight } from "lucide-react";
 import { serviceType } from "@/constants/common";
-import countryList from "react-select-country-list";
-import { useMemo, useState } from "react";
-import Select from "react-select";
+// import countryList from "react-select-country-list";
+import {  useState } from "react";
+// import Select from "react-select";
 import { toast } from "sonner";
 import { useCalculatePriceMutation } from "@/redux/features/common/commonApi";
 import { parse, isValid } from "date-fns";
 
 const Banner = () => {
-  const [value, setValue] = useState<{ label: string; value: string } | null>(
-    null
-  );
+  // const [value, setValue] = useState<{ label: string; value: string } | null>(
+  //   null
+  // );
   const [isreturnTrip, setIsreturnTrip] = useState<boolean>(false);
   const [returnSame, setReturnSame] = useState<boolean>(false);
   const [result, setResult] = useState<any>("");
-  const options: any = useMemo(() => countryList().getData(), []);
+  // const options: any = useMemo(() => countryList().getData(), []);
   const [calculate] = useCalculatePriceMutation();
 
-  const changeHandler = (value: any) => {
-    setValue(value);
-  };
+  // const changeHandler = (value: any) => {
+  //   setValue(value);
+  // };
 
   const handleCheckboxChange = (data: string) => {
     if (data === "returnToSameLocation") {
@@ -50,11 +50,15 @@ const Banner = () => {
       return;
     }
 
-    const country = value?.label;
     const returnTrip = isreturnTrip;
     const returnToSameLocation = returnSame;
 
-    const sendableData = { ...data, country, returnTrip, returnToSameLocation };
+    const sendableData = {
+      ...data,
+      country: "United Kingdom",
+      returnTrip,
+      returnToSameLocation,
+    };
 
     try {
       const res = await calculate(sendableData).unwrap();
@@ -161,28 +165,27 @@ const Banner = () => {
           </div>
 
           <div className="flex justify-center w-full gap-7 items-center">
-            <div className="md:w-96 ">
+            {/* <div className="md:w-96 ">
               <p className=" bg-white  mb-1">Selet Country</p>
               <Select
                 options={options}
                 value={value}
                 onChange={changeHandler}
               />
-            </div>
+            </div> */}
 
             <div className=" space-y-2">
               <div className="flex gap-2 items-center">
-                <p>Return Trip</p>
                 <input
                   type="checkbox"
                   checked={isreturnTrip}
                   onChange={() => handleCheckboxChange("returnSame")}
                 />
+                <p>Return Trip</p>
               </div>
 
               {isreturnTrip && (
                 <div className="flex gap-2 items-center">
-                  <p>Return To Same Location</p>
                   <input
                     type="checkbox"
                     checked={returnSame}
@@ -190,6 +193,7 @@ const Banner = () => {
                       handleCheckboxChange("returnToSameLocation")
                     }
                   />
+                  <p>Return To Same Location</p>
                 </div>
               )}
             </div>
