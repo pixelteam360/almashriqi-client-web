@@ -208,7 +208,7 @@ const Banner = () => {
               {result && (
                 <div className="">
                   <p>Result</p>
-                  <h3 className="text-xl text-primary">{result}$</h3>
+                  <h3 className="text-xl text-primary">{result}£</h3>
                 </div>
               )}
             </div>
