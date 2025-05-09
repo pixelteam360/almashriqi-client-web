@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import MyBtn from "@/components/common/MyBtn";
@@ -10,25 +11,19 @@ import MyFormSelect from "@/components/form/MyFormSelect";
 import { AlarmClock, CarFront, MapPin, Weight } from "lucide-react";
 import { serviceType } from "@/constants/common";
 // import countryList from "react-select-country-list";
-import {  useState } from "react";
+import { useState } from "react";
 // import Select from "react-select";
 import { toast } from "sonner";
 import { useCalculatePriceMutation } from "@/redux/features/common/commonApi";
 import { parse, isValid } from "date-fns";
+import Link from "next/link";
 
 const Banner = () => {
-  // const [value, setValue] = useState<{ label: string; value: string } | null>(
-  //   null
-  // );
   const [isreturnTrip, setIsreturnTrip] = useState<boolean>(false);
+  const [postCode, setPostCode] = useState<string[]>([]);
   const [returnSame, setReturnSame] = useState<boolean>(false);
   const [result, setResult] = useState<any>("");
-  // const options: any = useMemo(() => countryList().getData(), []);
   const [calculate] = useCalculatePriceMutation();
-
-  // const changeHandler = (value: any) => {
-  //   setValue(value);
-  // };
 
   const handleCheckboxChange = (data: string) => {
     if (data === "returnToSameLocation") {
@@ -38,6 +33,12 @@ const Banner = () => {
     }
   };
 
+  // handle post code
+  const handlePosrCode = (data: FieldValues) => {
+    const code = [...postCode, data.delivery];
+    setPostCode(code);
+  };
+  console.log(postCode);
   const handleSubmit = async (data: FieldValues) => {
     const toastId = toast.loading("Calculation...");
 
@@ -50,11 +51,21 @@ const Banner = () => {
       return;
     }
 
+    if (!postCode) {
+      toast.error(`Delivery post conde not found`, { id: toastId });
+      return;
+    }
+
     const returnTrip = isreturnTrip;
     const returnToSameLocation = returnSame;
 
+    const { toTime, ...rest } = data;
+
+    const delivery = postCode.at(-1);
+
     const sendableData = {
-      ...data,
+      ...rest,
+      delivery,
       country: "United Kingdom",
       returnTrip,
       returnToSameLocation,
@@ -95,125 +106,164 @@ const Banner = () => {
         </div>
       </div>
 
-      <div className="bg-white rounded-3xl pt-12 pb-3 px-4 shadow-md">
-        <MyFormWrapper onSubmit={handleSubmit}>
-          <div className="grid md:grid-cols-3 grid-cols-2 gap-6">
-            <div className="relative">
-              <p className="absolute -top-3 left-3 z-10 bg-white px-2">
-                PickUp
-              </p>
-              <MyFormInput
-                name="pickup"
-                inputClassName="border !border-[#2C2D5B] !rounded-2xl bg-white py-7 !text-sm px-7"
-                placeholder="enter Postcode"
-              />
-              <MapPin className="absolute top-7 left-[3px] text-primary w-5" />
+      <div className="flex md:flex-row flex-col-reverse gap-6 bg-white rounded-3xl pt-12 pb-3 px-4 shadow-md">
+        <div className="md:w-2/3">
+          <MyFormWrapper onSubmit={handleSubmit}>
+            <div className="grid md:grid-cols-3 grid-cols-1 gap-6">
+              <div className="relative">
+                <p className="absolute -top-3 left-3 z-10 bg-white px-2">
+                  PickUp
+                </p>
+                <MyFormInput
+                  name="pickup"
+                  inputClassName="border !border-[#2C2D5B] !rounded-2xl bg-white py-7 !text-sm px-7"
+                  placeholder="enter Postcode"
+                />
+                <MapPin className="absolute top-7 left-[3px] text-primary w-5" />
+              </div>
+              <div className="relative">
+                <p className="absolute -top-3 left-3 z-10 bg-white px-2">
+                  Weight
+                </p>
+                <MyFormInput
+                  name="weight"
+                  inputClassName="border !border-[#2C2D5B] !rounded-2xl bg-white py-7 !text-sm px-7"
+                  placeholder="weight (KG)"
+                />
+                <Weight className="absolute top-7 left-[3px] text-primary w-5" />
+              </div>
+              <div className="flex gap-2 items-center">
+                <div className="relative">
+                  <p className="absolute -top-3 left-3 z-10 bg-white px-2">
+                    Time
+                  </p>
+                  <MyFormInput
+                    name="time"
+                    inputClassName="border !border-[#2C2D5B] !rounded-2xl bg-white py-7 !text-sm px-7"
+                    placeholder="hour"
+                  />
+                  <AlarmClock className="absolute top-7 left-[3px] text-primary w-5" />
+                </div>
+                <p className="text-xl mb-6">to</p>
+                <div className="relative">
+                  <MyFormInput
+                    name="toTime"
+                    inputClassName="border !border-[#2C2D5B] !rounded-2xl bg-white py-7 !text-sm px-7"
+                    placeholder="hour"
+                  />
+                  <AlarmClock className="absolute top-7 left-[3px] text-primary w-5" />
+                </div>
+              </div>
+              <div className="relative">
+                <p className="absolute -top-3 left-3 z-10 bg-white px-2">
+                  Waiting Time
+                </p>
+                <MyFormInput
+                  name="waitingTime"
+                  inputClassName="border !border-[#2C2D5B] !rounded-2xl bg-white py-7 !text-sm px-7"
+                  placeholder="waiting time"
+                />
+                <AlarmClock className="absolute top-7 left-[3px] text-primary w-5" />
+              </div>
+              <div className="relative ">
+                <p className="absolute -top-3 left-3 z-10 bg-white px-2">
+                  Service
+                </p>
+                <MyFormSelect
+                  name="service"
+                  options={serviceType}
+                  selectClassName="border !border-[#2C2D5B] !rounded-2xl bg-white py-7 px-7 text-sm text-gray-400"
+                />
+                <CarFront className="absolute top-7 left-[3px] text-primary w-5" />
+              </div>
+
+              <div className="flex w-full gap-7">
+                <div className="space-y-2">
+                  <div className="flex gap-2 items-center">
+                    <input
+                      type="checkbox"
+                      checked={isreturnTrip}
+                      onChange={() => handleCheckboxChange("returnSame")}
+                    />
+                    <p>Return Trip</p>
+                  </div>
+
+                  {isreturnTrip && (
+                    <div className="flex gap-2 items-center">
+                      <input
+                        type="checkbox"
+                        checked={returnSame}
+                        onChange={() =>
+                          handleCheckboxChange("returnToSameLocation")
+                        }
+                      />
+                      <p>Return To Same Location</p>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
-            <div className="relative">
+
+            <div className="flex justify-center mt-8 gap-8 items-center">
+              <div className="inline-block">
+                <button className="px-16 whitespace-nowrap py-7 bg-primary rounded-2xl text-white font-bold">
+                  check price
+                </button>
+              </div>
+              <div>
+                {result && (
+                  <div className="flex gap-7 items-end">
+                    <div className="">
+                      <p>Result</p>
+                      <h3 className="text-xl text-primary">{result}£</h3>
+                    </div>
+                    <div className="inline-block">
+                      <Link href={{pathname: "/delivery-form", query: {price: result}}}>
+                        <p className="text-primary underline text-lg">
+                          Proceed to payment
+                        </p>
+                      </Link>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </MyFormWrapper>
+        </div>
+
+        <div className="md:w-1/3">
+          <MyFormWrapper onSubmit={handlePosrCode} className="h-full">
+            <div className="relative flex gap-2">
               <p className="absolute -top-3 left-3 z-10 bg-white px-2">
                 Delivery
               </p>
-              <MyFormInput
-                name="delivery"
-                inputClassName="border !border-[#2C2D5B] !rounded-2xl bg-white py-7 !text-sm px-7"
-                placeholder="enter Postcode"
-              />
-              <MapPin className="absolute top-7 left-[3px] text-primary w-5" />
-            </div>
-            <div className="relative">
-              <p className="absolute -top-3 left-3 z-10 bg-white px-2">
-                weight
-              </p>
-              <MyFormInput
-                name="weight"
-                inputClassName="border !border-[#2C2D5B] !rounded-2xl bg-white py-7 !text-sm px-7"
-                placeholder="weight (KG)"
-              />
-              <Weight className="absolute top-7 left-[3px] text-primary w-5" />
-            </div>
-            <div className="relative">
-              <p className="absolute -top-3 left-3 z-10 bg-white px-2">time</p>
-              <MyFormInput
-                name="time"
-                inputClassName="border !border-[#2C2D5B] !rounded-2xl bg-white py-7 !text-sm px-7"
-                placeholder="hour"
-              />
-              <AlarmClock className="absolute top-7 left-[3px] text-primary w-5" />
-            </div>
-            <div className="relative">
-              <p className="absolute -top-3 left-3 z-10 bg-white px-2">
-                Waiting Time
-              </p>
-              <MyFormInput
-                name="waitingTime"
-                inputClassName="border !border-[#2C2D5B] !rounded-2xl bg-white py-7 !text-sm px-7"
-                placeholder="waiting time"
-              />
-              <AlarmClock className="absolute top-7 left-[3px] text-primary w-5" />
-            </div>
-            <div className="relative ">
-              <p className="absolute -top-3 left-3 z-10 bg-white px-2">
-                Service
-              </p>
-              <MyFormSelect
-                name="service"
-                options={serviceType}
-                selectClassName="border !border-[#2C2D5B] !rounded-2xl bg-white py-7 px-7 text-sm text-gray-400"
-              />
-              <CarFront className="absolute top-7 left-[3px] text-primary w-5" />
-            </div>
-          </div>
-
-          <div className="flex justify-center w-full gap-7 items-center">
-            {/* <div className="md:w-96 ">
-              <p className=" bg-white  mb-1">Selet Country</p>
-              <Select
-                options={options}
-                value={value}
-                onChange={changeHandler}
-              />
-            </div> */}
-
-            <div className=" space-y-2">
-              <div className="flex gap-2 items-center">
-                <input
-                  type="checkbox"
-                  checked={isreturnTrip}
-                  onChange={() => handleCheckboxChange("returnSame")}
+              <div className="w-full">
+                <MyFormInput
+                  name="delivery"
+                  inputClassName="border !border-[#2C2D5B] !rounded-2xl bg-white py-7 !text-sm px-7"
+                  placeholder="enter Postcode"
                 />
-                <p>Return Trip</p>
               </div>
+              <MapPin className=" absolute top-7 left-[3px] text-primary w-5" />
+              <div className="inline-block">
+                <button className="bg-primary text-white px-3 py-2 rounded-lg">
+                  Add
+                </button>
+              </div>
+            </div>
+            <div className="relative h-2/3 border !border-[#2C2D5B] !rounded-2xl bg-white py-7 !text-sm px-7">
+              <p className="absolute -top-3 left-3 z-10 bg-white px-2 text-base">
+                Delivery Post Cods
+              </p>
 
-              {isreturnTrip && (
-                <div className="flex gap-2 items-center">
-                  <input
-                    type="checkbox"
-                    checked={returnSame}
-                    onChange={() =>
-                      handleCheckboxChange("returnToSameLocation")
-                    }
-                  />
-                  <p>Return To Same Location</p>
-                </div>
-              )}
+              <div className="flex gap-3">
+                {postCode?.map((item, idx) => (
+                  <p key={idx} className="bg-primary/15 px-2 rounded-md text-primary">{item}</p>
+                ))}
+              </div>
             </div>
-          </div>
-          <div className="flex justify-center mt-8 gap-8 items-center">
-            <div className="inline-block">
-              <button className="px-16 whitespace-nowrap py-7 bg-primary rounded-2xl text-white font-bold">
-                check price
-              </button>
-            </div>
-            <div className="">
-              {result && (
-                <div className="">
-                  <p>Result</p>
-                  <h3 className="text-xl text-primary">{result}£</h3>
-                </div>
-              )}
-            </div>
-          </div>
-        </MyFormWrapper>
+          </MyFormWrapper>
+        </div>
       </div>
     </div>
   );
