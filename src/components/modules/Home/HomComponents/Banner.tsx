@@ -38,7 +38,7 @@ const Banner = () => {
     const code = [...postCode, data.delivery];
     setPostCode(code);
   };
-  console.log(postCode);
+
   const handleSubmit = async (data: FieldValues) => {
     const toastId = toast.loading("Calculation...");
 
@@ -51,7 +51,7 @@ const Banner = () => {
       return;
     }
 
-    if (!postCode) {
+    if (postCode.length < 1) {
       toast.error(`Delivery post conde not found`, { id: toastId });
       return;
     }
