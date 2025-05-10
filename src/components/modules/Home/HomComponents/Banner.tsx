@@ -92,7 +92,7 @@ const Banner = () => {
   const deliveryAutocompleteRef =
     useRef<google.maps.places.Autocomplete | null>(null);
 
-  // Handle the selection from the Autocomplete suggestions
+  // Handle the selection from the Autocomplete 
   const handlePlaceSelect = () => {
     const place = deliveryAutocompleteRef.current?.getPlace();
 
@@ -182,7 +182,7 @@ const Banner = () => {
             <MyBtn name="Download App" />
           </div>
         </div>
-
+{/* //hasan  */}
         <div className="md:w-2/5">
           <Image src={banner} alt="banner" height={1000} width={1000} />
         </div>
