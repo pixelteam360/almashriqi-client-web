@@ -53,8 +53,8 @@ const LoginForm = () => {
         </div>
         <h1 className="text-center md:text-5xl text-2xl font-bold">Sign Up</h1>
         <MyFormWrapper onSubmit={handleSubmit}>
-          <MyFormInput name="email" type="email" label="Email" />
-          <MyFormInput name="password" type="password" label="Password" />
+          <MyFormInput name="email" type="email" label="Email" inputClassName="bg-[#f6f6f6]" />
+          <MyFormInput name="password" type="password" label="Password" inputClassName="bg-[#f6f6f6]" />
           <div className="flex justify-end mb-5">
             <Link href={"forgot-password"} className="text-primary font-semibold ">
               Forgot password?

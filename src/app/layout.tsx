@@ -3,6 +3,7 @@ import { Lato } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
 import ReduxProvider from "@/redux/provider/ReduxProvider";
+import Script from "next/script";
 
 const lato = Lato({
   subsets: ["latin"],
@@ -21,6 +22,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <script
+          src={`https://maps.googleapis.com/maps/api/js?key=AIzaSyDKh_wbcDcAMUeu-V9luJrVODl2CzJt6lQ&libraries=places`}
+          async
+          defer
+        ></script>
+      </head>
       <body className={`${lato.className} antialiased`}>
         <Toaster position="bottom-right" richColors />
         <ReduxProvider>{children}</ReduxProvider>

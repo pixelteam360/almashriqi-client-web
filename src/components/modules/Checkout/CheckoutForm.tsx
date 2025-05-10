@@ -56,7 +56,6 @@ const CheckoutForm = () => {
       if (result.error) {
         setError(result.error.message || "Payment failed");
       } else if (result.paymentIntent?.status === "succeeded") {
-        // console.log("Payment successful:", result.paymentIntent);
         await afterPayment({
           orderId: requestId,
           paymentInt: result.paymentIntent.id,

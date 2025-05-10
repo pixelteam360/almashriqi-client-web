@@ -52,16 +52,21 @@ const FooterBar = () => {
             <h2 className="text-lg font-bold">Social Media</h2>
 
             <ul className="flex gap-4">
-              <Link href={""}>
+              <Link
+                href={
+                  "https://www.facebook.com/share/1AbUEPkubA/?mibextid=wwXIfr"
+                }
+                target="_blank"
+              >
                 <FaFacebookF className="w-12 h-12 rounded-full bg-white text-primary p-3" />{" "}
               </Link>
-              <Link href={"https://wa.me/447311121217"} target="_blank">
+              <Link href={"#"} target="_blank">
                 <FaTwitter className="w-12 h-12 rounded-full bg-white text-primary p-3" />
               </Link>
-              <Link href={""}>
+              <Link href={"https://wa.me/447311121217"} target="_blank">
                 <RiWhatsappFill className="w-12 h-12 rounded-full bg-white text-primary p-3" />
               </Link>
-              <Link href={""}>
+              <Link href={"#"}>
                 <FaInstagramSquare className="w-12 h-12 rounded-full bg-white text-primary p-3" />
               </Link>
             </ul>

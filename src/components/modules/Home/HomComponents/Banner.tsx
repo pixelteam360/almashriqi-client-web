@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
+import { useEffect, useRef, useState } from "react";
 import MyBtn from "@/components/common/MyBtn";
 import banner from "../../../../assets/images/need-same-day.png";
 import Image from "next/image";
@@ -10,13 +11,11 @@ import { FieldValues } from "react-hook-form";
 import MyFormSelect from "@/components/form/MyFormSelect";
 import { AlarmClock, CarFront, MapPin, Weight } from "lucide-react";
 import { serviceType } from "@/constants/common";
-// import countryList from "react-select-country-list";
-import { useState } from "react";
-// import Select from "react-select";
 import { toast } from "sonner";
 import { useCalculatePriceMutation } from "@/redux/features/common/commonApi";
 import { parse, isValid } from "date-fns";
 import Link from "next/link";
+import { Autocomplete } from "@react-google-maps/api";
 
 const Banner = () => {
   const [isreturnTrip, setIsreturnTrip] = useState<boolean>(false);
@@ -33,12 +32,6 @@ const Banner = () => {
     }
   };
 
-  // handle post code
-  const handlePosrCode = (data: FieldValues) => {
-    const code = [...postCode, data.delivery];
-    setPostCode(code);
-  };
-
   const handleSubmit = async (data: FieldValues) => {
     const toastId = toast.loading("Calculation...");
 
@@ -52,7 +45,7 @@ const Banner = () => {
     }
 
     if (postCode.length < 1) {
-      toast.error(`Delivery post conde not found`, { id: toastId });
+      toast.error(`Delivery post code not found`, { id: toastId });
       return;
     }
 
@@ -61,7 +54,7 @@ const Banner = () => {
 
     const { toTime, ...rest } = data;
 
-    const delivery = postCode.at(-1);
+    const delivery = postCode;
 
     const sendableData = {
       ...rest,
@@ -79,10 +72,50 @@ const Banner = () => {
         setResult(res.data);
       }
     } catch (err: any) {
-      toast.error(err.data?.message || "Faild to Calculate", { id: toastId });
+      toast.error(err.data?.message || "Failed to Calculate", { id: toastId });
     }
   };
 
+  // Google Maps Autocomplete ref
+  const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
+
+  // Handle the selection from the Autocomplete suggestions
+  const handlePlaceSelect = () => {
+    const place = autocompleteRef.current?.getPlace();
+
+    if (!place || !place.address_components) {
+      toast.error("Please select a valid UK postcode");
+      return;
+    }
+
+    const postcodeComponent = place.address_components.find((component) =>
+      component.types.includes("postal_code")
+    );
+
+    if (!postcodeComponent) {
+      toast.error("No postcode found in selection");
+      return;
+    }
+
+    const postcode = postcodeComponent.long_name.toUpperCase();
+
+    // Optional: Validate UK postcode format
+    const ukPostcodeRegex = /^[A-Z]{1,2}\d[A-Z\d]?\s?\d[A-Z]{2}$/i;
+
+    if (!ukPostcodeRegex.test(postcode)) {
+      toast.error("Invalid UK postcode format");
+      return;
+    }
+
+    if (postCode.includes(postcode)) {
+      toast.warning("Postcode already added");
+      return;
+    }
+
+    setPostCode((prev) => [...prev, postcode]);
+  };
+
+  console.log(postCode);
   return (
     <div className="">
       <div className="flex md:flex-row flex-col-reverse items-center gap-7 md:mb-24 mb-10">
@@ -121,6 +154,50 @@ const Banner = () => {
                 />
                 <MapPin className="absolute top-7 left-[3px] text-primary w-5" />
               </div>
+              {/* for small device  */}
+              <div className="md:hidden ">
+                <div className="relative flex gap-2">
+                  <p className="absolute -top-3 left-3 z-10 bg-white px-2">
+                    Delivery
+                  </p>
+                  <div className="w-full">
+                    <Autocomplete
+                      onLoad={(autocomplete) => {
+                        autocompleteRef.current = autocomplete;
+                      }}
+                      onPlaceChanged={handlePlaceSelect}
+                      options={{
+                        componentRestrictions: { country: "uk" },
+                        types: ["postal_code"], // Only show UK postcode suggestions
+                      }}
+                    >
+                      <input
+                        name="delivery"
+                        className="border border-[#2C2D5B] rounded-2xl bg-white py-7 text-sm px-7 w-full mb-8"
+                        placeholder="Enter UK Postcode"
+                      />
+                    </Autocomplete>
+                  </div>
+                  <MapPin className=" absolute top-7 left-[3px] text-primary w-5" />
+                </div>
+                <div className="relative border !border-[#2C2D5B] !rounded-2xl bg-white py-7 !text-sm px-7">
+                  <p className="absolute -top-3 left-3 z-10 bg-white px-2 text-base">
+                    Delivery Post Codes
+                  </p>
+
+                  <div className="flex gap-3">
+                    {postCode?.map((item, idx) => (
+                      <p
+                        key={idx}
+                        className="bg-primary/15 px-2 rounded-md text-primary"
+                      >
+                        {item}
+                      </p>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
               <div className="relative">
                 <p className="absolute -top-3 left-3 z-10 bg-white px-2">
                   Weight
@@ -131,28 +208,6 @@ const Banner = () => {
                   placeholder="weight (KG)"
                 />
                 <Weight className="absolute top-7 left-[3px] text-primary w-5" />
-              </div>
-              <div className="flex gap-2 items-center">
-                <div className="relative">
-                  <p className="absolute -top-3 left-3 z-10 bg-white px-2">
-                    Time
-                  </p>
-                  <MyFormInput
-                    name="time"
-                    inputClassName="border !border-[#2C2D5B] !rounded-2xl bg-white py-7 !text-sm px-7"
-                    placeholder="hour"
-                  />
-                  <AlarmClock className="absolute top-7 left-[3px] text-primary w-5" />
-                </div>
-                <p className="text-xl mb-6">to</p>
-                <div className="relative">
-                  <MyFormInput
-                    name="toTime"
-                    inputClassName="border !border-[#2C2D5B] !rounded-2xl bg-white py-7 !text-sm px-7"
-                    placeholder="hour"
-                  />
-                  <AlarmClock className="absolute top-7 left-[3px] text-primary w-5" />
-                </div>
               </div>
               <div className="relative">
                 <p className="absolute -top-3 left-3 z-10 bg-white px-2">
@@ -165,6 +220,7 @@ const Banner = () => {
                 />
                 <AlarmClock className="absolute top-7 left-[3px] text-primary w-5" />
               </div>
+
               <div className="relative ">
                 <p className="absolute -top-3 left-3 z-10 bg-white px-2">
                   Service
@@ -175,6 +231,29 @@ const Banner = () => {
                   selectClassName="border !border-[#2C2D5B] !rounded-2xl bg-white py-7 px-7 text-sm text-gray-400"
                 />
                 <CarFront className="absolute top-7 left-[3px] text-primary w-5" />
+              </div>
+
+              <div className="flex gap-2 items-center">
+                <div className="relative">
+                  <p className="absolute -top-3 left-3 z-10 bg-white px-2">
+                    Time
+                  </p>
+                  <MyFormInput
+                    name="time"
+                    inputClassName="border !border-[#2C2D5B] !rounded-2xl bg-white py-7 !text-sm px-7"
+                    placeholder="hour"
+                  />
+                  <AlarmClock className="absolute top-7 left-[3px] text-primary w-5" />
+                </div>
+                <p className="md:text-xl mb-6">to</p>
+                <div className="relative">
+                  <MyFormInput
+                    name="toTime"
+                    inputClassName="border !border-[#2C2D5B] !rounded-2xl bg-white py-7 !text-sm px-7"
+                    placeholder="hour"
+                  />
+                  <AlarmClock className="absolute top-7 left-[3px] text-primary w-5" />
+                </div>
               </div>
 
               <div className="flex w-full gap-7">
@@ -218,7 +297,12 @@ const Banner = () => {
                       <h3 className="text-xl text-primary">{result}£</h3>
                     </div>
                     <div className="inline-block">
-                      <Link href={{pathname: "/delivery-form", query: {price: result}}}>
+                      <Link
+                        href={{
+                          pathname: "/delivery-form",
+                          query: { price: result },
+                        }}
+                      >
                         <p className="text-primary underline text-lg">
                           Proceed to payment
                         </p>
@@ -231,38 +315,47 @@ const Banner = () => {
           </MyFormWrapper>
         </div>
 
-        <div className="md:w-1/3">
-          <MyFormWrapper onSubmit={handlePosrCode} className="h-full">
-            <div className="relative flex gap-2">
-              <p className="absolute -top-3 left-3 z-10 bg-white px-2">
-                Delivery
-              </p>
-              <div className="w-full">
-                <MyFormInput
+        <div className="md:w-1/3 md:block hidden">
+          <div className="relative flex gap-2">
+            <p className="absolute -top-3 left-3 z-10 bg-white px-2">
+              Delivery
+            </p>
+            <div className="w-full">
+              <Autocomplete
+                onLoad={(autocomplete) => {
+                  autocompleteRef.current = autocomplete;
+                }}
+                onPlaceChanged={handlePlaceSelect}
+                options={{
+                  componentRestrictions: { country: "uk" },
+                  types: ["postal_code"], // Only show UK postcode suggestions
+                }}
+              >
+                <input
                   name="delivery"
-                  inputClassName="border !border-[#2C2D5B] !rounded-2xl bg-white py-7 !text-sm px-7"
-                  placeholder="enter Postcode"
+                  className="border border-[#2C2D5B] rounded-2xl bg-white py-7 text-sm px-7 w-full mb-8"
+                  placeholder="Enter UK Postcode"
                 />
-              </div>
-              <MapPin className=" absolute top-7 left-[3px] text-primary w-5" />
-              <div className="inline-block">
-                <button className="bg-primary text-white px-3 py-2 rounded-lg">
-                  Add
-                </button>
-              </div>
+              </Autocomplete>
             </div>
-            <div className="relative h-2/3 border !border-[#2C2D5B] !rounded-2xl bg-white py-7 !text-sm px-7">
-              <p className="absolute -top-3 left-3 z-10 bg-white px-2 text-base">
-                Delivery Post Cods
-              </p>
+            <MapPin className=" absolute top-7 left-[3px] text-primary w-5" />
+          </div>
+          <div className="relative h-2/3 border !border-[#2C2D5B] !rounded-2xl bg-white py-7 !text-sm px-7">
+            <p className="absolute -top-3 left-3 z-10 bg-white px-2 text-base">
+              Delivery Post Codes
+            </p>
 
-              <div className="flex gap-3">
-                {postCode?.map((item, idx) => (
-                  <p key={idx} className="bg-primary/15 px-2 rounded-md text-primary">{item}</p>
-                ))}
-              </div>
+            <div className="flex gap-3">
+              {postCode?.map((item, idx) => (
+                <p
+                  key={idx}
+                  className="bg-primary/15 px-2 rounded-md text-primary"
+                >
+                  {item}
+                </p>
+              ))}
             </div>
-          </MyFormWrapper>
+          </div>
         </div>
       </div>
     </div>

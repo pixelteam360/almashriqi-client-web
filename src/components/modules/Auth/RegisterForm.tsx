@@ -53,18 +53,20 @@ const RegisterForm = () => {
         </div>
         <h1 className="text-center md:text-5xl text-2xl font-bold">Sign Up</h1>
         <MyFormWrapper onSubmit={handleSubmit}>
-          <MyFormInput name="email" type="email" label="Email" />
-          <MyFormInput name="phoneNumber" label=" Enter Number" />
+          <MyFormInput name="email" type="email" label="Email" inputClassName="bg-[#f6f6f6]"/>
+          <MyFormInput name="phoneNumber" label=" Enter Number" inputClassName="bg-[#f6f6f6]"/>
           <MyFormSelect
             name="role"
             options={userOptions}
             label=" Profile Type"
+            selectClassName="bg-[#f6f6f6]"
           />
-          <MyFormInput name="password" type="password" label="Password" />
+          <MyFormInput name="password" type="password" label="Password" inputClassName="bg-[#f6f6f6]" />
           <MyFormInput
             name="confirmPassword"
             type="password"
             label="Confirm Password"
+            inputClassName="bg-[#f6f6f6]"
           />
           <MyBtn name="Sign Up" width="w-full" />
         </MyFormWrapper>
