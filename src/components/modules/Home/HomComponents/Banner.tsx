@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import MyBtn from "@/components/common/MyBtn";
 import banner from "../../../../assets/images/need-same-day.png";
 import Image from "next/image";
@@ -232,7 +232,7 @@ const Banner = () => {
                       onPlaceChanged={handlePlaceSelect}
                       options={{
                         componentRestrictions: { country: "uk" },
-                        types: ["postal_code"], 
+                        types: ["postal_code"],
                       }}
                     >
                       <input
