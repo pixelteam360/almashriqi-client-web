@@ -15,14 +15,22 @@ import { toast } from "sonner";
 import { useCalculatePriceMutation } from "@/redux/features/common/commonApi";
 import { parse, isValid } from "date-fns";
 import Link from "next/link";
-import { Autocomplete } from "@react-google-maps/api";
+import { Autocomplete, useLoadScript } from "@react-google-maps/api";
+import Spinner from "@/components/common/Spinner";
 
 const Banner = () => {
   const [isreturnTrip, setIsreturnTrip] = useState<boolean>(false);
   const [postCode, setPostCode] = useState<string[]>([]);
   const [returnSame, setReturnSame] = useState<boolean>(false);
   const [result, setResult] = useState<any>("");
+  const [pickup, setPickup] = useState<string>("");
   const [calculate] = useCalculatePriceMutation();
+  const deliveryInputRef = useRef<HTMLInputElement | null>(null);
+
+  const { isLoaded } = useLoadScript({
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_API_KEY || "",
+    libraries: ["places"],
+  });
 
   const handleCheckboxChange = (data: string) => {
     if (data === "returnToSameLocation") {
@@ -58,12 +66,13 @@ const Banner = () => {
 
     const sendableData = {
       ...rest,
+      pickup,
       delivery,
       country: "United Kingdom",
       returnTrip,
       returnToSameLocation,
     };
-
+    console.log(sendableData);
     try {
       const res = await calculate(sendableData).unwrap();
 
@@ -77,11 +86,15 @@ const Banner = () => {
   };
 
   // Google Maps Autocomplete ref
-  const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
+  const pickupAutocompleteRef = useRef<google.maps.places.Autocomplete | null>(
+    null
+  );
+  const deliveryAutocompleteRef =
+    useRef<google.maps.places.Autocomplete | null>(null);
 
   // Handle the selection from the Autocomplete suggestions
   const handlePlaceSelect = () => {
-    const place = autocompleteRef.current?.getPlace();
+    const place = deliveryAutocompleteRef.current?.getPlace();
 
     if (!place || !place.address_components) {
       toast.error("Please select a valid UK postcode");
@@ -99,7 +112,6 @@ const Banner = () => {
 
     const postcode = postcodeComponent.long_name.toUpperCase();
 
-    // Optional: Validate UK postcode format
     const ukPostcodeRegex = /^[A-Z]{1,2}\d[A-Z\d]?\s?\d[A-Z]{2}$/i;
 
     if (!ukPostcodeRegex.test(postcode)) {
@@ -113,9 +125,46 @@ const Banner = () => {
     }
 
     setPostCode((prev) => [...prev, postcode]);
+    if (deliveryInputRef.current) {
+      deliveryInputRef.current.value = "";
+    }
   };
 
-  console.log(postCode);
+  const handlePickUpSelect = () => {
+    const place = pickupAutocompleteRef.current?.getPlace();
+
+    if (!place || !place.address_components) {
+      toast.error("Please select a valid UK postcode");
+      return;
+    }
+
+    const postcodeComponent = place.address_components.find((component) =>
+      component.types.includes("postal_code")
+    );
+
+    if (!postcodeComponent) {
+      toast.error("No postcode found in selection");
+      return;
+    }
+
+    const postcode = postcodeComponent.long_name.toUpperCase();
+
+    const ukPostcodeRegex = /^[A-Z]{1,2}\d[A-Z\d]?\s?\d[A-Z]{2}$/i;
+
+    if (!ukPostcodeRegex.test(postcode)) {
+      toast.error("Invalid UK postcode format");
+      return;
+    }
+
+    if (postCode.includes(postcode)) {
+      toast.warning("Postcode already added");
+      return;
+    }
+
+    setPickup(postcode);
+  };
+
+  if (!isLoaded) return <Spinner />;
   return (
     <div className="">
       <div className="flex md:flex-row flex-col-reverse items-center gap-7 md:mb-24 mb-10">
@@ -143,17 +192,32 @@ const Banner = () => {
         <div className="md:w-2/3">
           <MyFormWrapper onSubmit={handleSubmit}>
             <div className="grid md:grid-cols-3 grid-cols-1 gap-6">
-              <div className="relative">
+              <div className="relative flex gap-2">
                 <p className="absolute -top-3 left-3 z-10 bg-white px-2">
                   PickUp
                 </p>
-                <MyFormInput
-                  name="pickup"
-                  inputClassName="border !border-[#2C2D5B] !rounded-2xl bg-white py-7 !text-sm px-7"
-                  placeholder="enter Postcode"
-                />
-                <MapPin className="absolute top-7 left-[3px] text-primary w-5" />
+                <div className="w-full">
+                  <Autocomplete
+                    onLoad={(autocomplete) => {
+                      pickupAutocompleteRef.current = autocomplete;
+                    }}
+                    onPlaceChanged={handlePickUpSelect}
+                    options={{
+                      componentRestrictions: { country: "uk" },
+                      types: ["postal_code"],
+                    }}
+                  >
+                    <input
+                      ref={deliveryInputRef}
+                      name="pickup"
+                      className="border border-[#2C2D5B] rounded-2xl bg-white py-7 text-sm px-7 w-full mb-8"
+                      placeholder="Enter UK Postcode"
+                    />
+                  </Autocomplete>
+                </div>
+                <MapPin className=" absolute top-7 left-[3px] text-primary w-5" />
               </div>
+
               {/* for small device  */}
               <div className="md:hidden ">
                 <div className="relative flex gap-2">
@@ -163,12 +227,12 @@ const Banner = () => {
                   <div className="w-full">
                     <Autocomplete
                       onLoad={(autocomplete) => {
-                        autocompleteRef.current = autocomplete;
+                        deliveryAutocompleteRef.current = autocomplete;
                       }}
                       onPlaceChanged={handlePlaceSelect}
                       options={{
                         componentRestrictions: { country: "uk" },
-                        types: ["postal_code"], // Only show UK postcode suggestions
+                        types: ["postal_code"], 
                       }}
                     >
                       <input
@@ -323,15 +387,16 @@ const Banner = () => {
             <div className="w-full">
               <Autocomplete
                 onLoad={(autocomplete) => {
-                  autocompleteRef.current = autocomplete;
+                  deliveryAutocompleteRef.current = autocomplete;
                 }}
                 onPlaceChanged={handlePlaceSelect}
                 options={{
                   componentRestrictions: { country: "uk" },
-                  types: ["postal_code"], // Only show UK postcode suggestions
+                  types: ["postal_code"],
                 }}
               >
                 <input
+                  ref={deliveryInputRef}
                   name="delivery"
                   className="border border-[#2C2D5B] rounded-2xl bg-white py-7 text-sm px-7 w-full mb-8"
                   placeholder="Enter UK Postcode"
