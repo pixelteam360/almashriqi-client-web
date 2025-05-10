@@ -3,7 +3,6 @@ import { Lato } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
 import ReduxProvider from "@/redux/provider/ReduxProvider";
-import Script from "next/script";
 
 const lato = Lato({
   subsets: ["latin"],
