@@ -10,7 +10,7 @@ import MyFormInput from "@/components/form/MyFormInput";
 import { FieldValues } from "react-hook-form";
 import MyFormSelect from "@/components/form/MyFormSelect";
 import { AlarmClock, CarFront, MapPin, Weight } from "lucide-react";
-import { serviceType } from "@/constants/common";
+import { serviceType, timeType } from "@/constants/common";
 import { toast } from "sonner";
 import { useCalculatePriceMutation } from "@/redux/features/common/commonApi";
 import { parse, isValid } from "date-fns";
@@ -43,15 +43,6 @@ const Banner = () => {
   const handleSubmit = async (data: FieldValues) => {
     const toastId = toast.loading("Calculation...");
 
-    const parsedTime = parse(data.time, "HH:mm", new Date());
-
-    const validateTime = isValid(parsedTime) && data.time.length === 5;
-
-    if (!validateTime) {
-      toast.error(`Time should be in "HH:MM" format`, { id: toastId });
-      return;
-    }
-
     if (postCode.length < 1) {
       toast.error(`Delivery post code not found`, { id: toastId });
       return;
@@ -72,13 +63,13 @@ const Banner = () => {
       returnTrip,
       returnToSameLocation,
     };
-    console.log(sendableData);
+
     try {
       const res = await calculate(sendableData).unwrap();
 
       if (res) {
         toast.success("Calculation success", { id: toastId });
-        setResult(res.data);
+        setResult(res.data.result2);
       }
     } catch (err: any) {
       toast.error(err.data?.message || "Failed to Calculate", { id: toastId });
@@ -296,19 +287,19 @@ const Banner = () => {
                   <p className="absolute -top-3 left-3 z-10 bg-white px-2">
                     Time
                   </p>
-                  <MyFormInput
+                  <MyFormSelect
                     name="time"
-                    inputClassName="border !border-[#2C2D5B] !rounded-2xl bg-white py-7 !text-sm px-7"
-                    placeholder="hour"
+                    selectClassName="border !border-[#2C2D5B] !rounded-2xl bg-white py-7 !text-sm px-7"
+                    options={timeType}
                   />
                   <AlarmClock className="absolute top-7 left-[3px] text-primary w-5" />
                 </div>
                 <p className="md:text-xl mb-6">to</p>
                 <div className="relative">
-                  <MyFormInput
+                  <MyFormSelect
                     name="toTime"
-                    inputClassName="border !border-[#2C2D5B] !rounded-2xl bg-white py-7 !text-sm px-7"
-                    placeholder="hour"
+                    selectClassName="border !border-[#2C2D5B] !rounded-2xl bg-white py-7 !text-sm px-7"
+                    options={timeType}
                   />
                   <AlarmClock className="absolute top-7 left-[3px] text-primary w-5" />
                 </div>

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import MyContainer from "../common/MyContainer";
-import { FaFacebookF, FaInstagramSquare, FaTwitter } from "react-icons/fa";
+import { FaFacebookF } from "react-icons/fa";
+import { SiTrustpilot } from "react-icons/si";
 import { RiWhatsappFill } from "react-icons/ri";
 
 const FooterBar = () => {
@@ -60,14 +61,14 @@ const FooterBar = () => {
               >
                 <FaFacebookF className="w-12 h-12 rounded-full bg-white text-primary p-3" />{" "}
               </Link>
-              <Link href={"#"} target="_blank">
-                <FaTwitter className="w-12 h-12 rounded-full bg-white text-primary p-3" />
-              </Link>
               <Link href={"https://wa.me/447311121217"} target="_blank">
                 <RiWhatsappFill className="w-12 h-12 rounded-full bg-white text-primary p-3" />
               </Link>
-              <Link href={"#"}>
-                <FaInstagramSquare className="w-12 h-12 rounded-full bg-white text-primary p-3" />
+              <Link
+                href={"https://uk.trustpilot.com/review/runcourier.co.uk"}
+                target="_blank"
+              >
+                <SiTrustpilot className="w-12 h-12 rounded-full bg-white text-primary p-3" />
               </Link>
             </ul>
           </div>

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
@@ -5,7 +6,7 @@ import MyBtn from "@/components/common/MyBtn";
 import MyFormInput from "@/components/form/MyFormInput";
 import MyFormSelect from "@/components/form/MyFormSelect";
 import MyFormWrapper from "@/components/form/MyFormWrapper";
-import { serviceType } from "@/constants/common";
+import { serviceType, timeType } from "@/constants/common";
 import { useDeliveryMutation } from "@/redux/features/common/commonApi";
 import { validateHHMMTime } from "@/utils/validateHHMMTime";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -20,30 +21,15 @@ const DeliveryForm = () => {
   const handleSubmit = async (data: FieldValues) => {
     const toastId = toast.loading("Uploading...");
 
+    const { toAvgDeliveryTime, ...restData } = data;
+
     const date = new Date(data.preferredCollectionDate).toISOString();
 
     const packageWeight = parseInt(data.packageWeight, 10);
 
-    if ((data.packageWeight && isNaN(packageWeight)) || packageWeight <= 0) {
-      toast.error("Invalid package Weight. Please enter a valid number.", {
-        id: toastId,
-      });
-      return;
-    }
-
-    if (!validateHHMMTime(data.avgCollectionTime)) {
-      toast.error(`Time should be in "HH:MM" format`, { id: toastId });
-      return;
-    }
-
-    if (!validateHHMMTime(data.avgDeliveryTime)) {
-      toast.error(`Time should be in "HH:MM" format`, { id: toastId });
-      return;
-    }
-
     try {
       const res = await delivery({
-        ...data,
+        ...restData,
         preferredCollectionDate: date,
         packageWeight,
       }).unwrap();
@@ -85,14 +71,26 @@ const DeliveryForm = () => {
           placeholder="Preferred Collection Date"
           type="date"
         />
-        <MyFormInput
+
+        <MyFormSelect
           name="avgCollectionTime"
-          placeholder="Average Collection Time"
+          options={timeType}
+          label="Average Collection Time"
         />
-        <MyFormInput
-          name="avgDeliveryTime"
-          placeholder="Average Delivery Time"
-        />
+
+        <div className="flex items-center gap-2">
+          <MyFormSelect
+            name="avgDeliveryTime"
+            options={timeType}
+            label="Average Delivery Time"
+          />
+          <p>to</p>
+          <MyFormSelect
+            name="toAvgDeliveryTime"
+            options={timeType}
+            label="Average Delivery Time"
+          />
+        </div>
 
         <p className="text-xl font-medium mt-8 mb-3">Package Information</p>
         <MyFormInput
