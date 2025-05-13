@@ -64,21 +64,21 @@ export const serviceType = [
   {
     label: "Motorbike",
     keyOption: "001",
-    value: "Motorbike",
+    value: "motorbike",
   },
   {
     label: "Car",
     keyOption: "002",
-    value: "Car",
+    value: "car",
   },
   {
     label: "Small Van",
     keyOption: "003",
-    value: "Small Van",
+    value: "smallVan",
   },
   {
     label: "Medium Van",
     keyOption: "004",
-    value: "Medium Van",
+    value: "mediumVan",
   },
 ];

@@ -112,13 +112,6 @@ const Banner = () => {
 
     const postcode = postcodeComponent.long_name.toUpperCase();
 
-    const ukPostcodeRegex = /^[A-Z]{1,2}\d[A-Z\d]?\s?\d[A-Z]{2}$/i;
-
-    if (!ukPostcodeRegex.test(postcode)) {
-      toast.error("Invalid UK postcode format");
-      return;
-    }
-
     if (postCode.includes(postcode)) {
       toast.warning("Postcode already added");
       return;
@@ -148,13 +141,6 @@ const Banner = () => {
     }
 
     const postcode = postcodeComponent.long_name.toUpperCase();
-
-    const ukPostcodeRegex = /^[A-Z]{1,2}\d[A-Z\d]?\s?\d[A-Z]{2}$/i;
-
-    if (!ukPostcodeRegex.test(postcode)) {
-      toast.error("Invalid UK postcode format");
-      return;
-    }
 
     if (postCode.includes(postcode)) {
       toast.warning("Postcode already added");
