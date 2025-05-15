@@ -55,7 +55,7 @@ const FooterBar = () => {
             <ul className="flex gap-4">
               <Link
                 href={
-                  "https://www.facebook.com/share/1AbUEPkubA/?mibextid=wwXIfr"
+                  "https://www.facebook.com/profile.php?id=61575957463562"
                 }
                 target="_blank"
               >
