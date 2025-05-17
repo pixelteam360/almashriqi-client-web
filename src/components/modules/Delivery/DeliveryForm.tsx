@@ -17,15 +17,17 @@ import Spinner from "@/components/common/Spinner";
 const DeliveryForm = () => {
   const router = useRouter();
   const price = useSearchParams().get("price");
-  const [delivery] = useDeliveryMutation();
   const [isMultiple, setIsMultiple] = useState(false);
   const [pickup, setPickup] = useState("");
   const [postCodes, setPostCodes] = useState<string[]>([]);
+  const [recipientAddresses, setRecipientAddresses] = useState<string[]>([]);
+  const [tempAddress, setTempAddress] = useState("");
   const pickupRef = useRef<HTMLInputElement>(null);
   const deliveryRef = useRef<HTMLInputElement>(null);
   const pickupAutoRef = useRef<google.maps.places.Autocomplete | null>(null);
   const deliveryAutoRef = useRef<google.maps.places.Autocomplete | null>(null);
-// lool
+  const [delivery] = useDeliveryMutation();
+
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_API_KEY || "",
     libraries: ["places"],
@@ -85,6 +87,17 @@ const DeliveryForm = () => {
 
     const packageWeight = parseInt(data.packageWeight, 10);
 
+    const recipientAddress = recipientAddresses || [data.recipientAddress];
+
+    console.log({
+      ...restData,
+      pickupPostCode: pickup,
+      recipientPostCode: postCodes,
+      preferredCollectionDate: date,
+      packageWeight,
+      recipientAddress,
+    });
+
     try {
       const res = await delivery({
         ...restData,
@@ -92,6 +105,7 @@ const DeliveryForm = () => {
         recipientPostCode: postCodes,
         preferredCollectionDate: date,
         packageWeight,
+        recipientAddress,
       }).unwrap();
 
       if (res) {
@@ -105,6 +119,17 @@ const DeliveryForm = () => {
     }
   };
 
+  const handleMultipleAddress = () => {
+    if (!tempAddress.trim()) return toast.error("Address is required");
+
+    if (recipientAddresses.includes(tempAddress.trim())) {
+      return toast.warning("This address is already added");
+    }
+
+    setRecipientAddresses((prev) => [...prev, tempAddress.trim()]);
+    setTempAddress("");
+  };
+
   if (!isLoaded) return <Spinner />;
 
   return (
@@ -114,8 +139,6 @@ const DeliveryForm = () => {
         <MyFormInput name="pickupName" placeholder="Name" />
         <MyFormInput name="pickupMobile" placeholder="Mobile Number" />
         <MyFormInput name="pickupEmail" placeholder="Email" />
-        {/* <MyFormInput name="pickupPostCode" placeholder="Post Code" /> */}
-
         <Autocomplete
           onLoad={(autocomplete) => (pickupAutoRef.current = autocomplete)}
           onPlaceChanged={() => handlePlaceSelect("pickup")}
@@ -138,7 +161,6 @@ const DeliveryForm = () => {
         <MyFormInput name="recipientName" placeholder="Name" />
         <MyFormInput name="recipientMobile" placeholder="Mobile Number" />
         <MyFormInput name="recipientEmail" placeholder="Email" />
-        {/* <MyFormInput name="recipientPostCode" placeholder="Post Code" /> */}
         <Autocomplete
           onLoad={(autocomplete) => (deliveryAutoRef.current = autocomplete)}
           onPlaceChanged={() => handlePlaceSelect("delivery")}
@@ -174,7 +196,57 @@ const DeliveryForm = () => {
             ))}
           </div>
         )}
-        <MyFormInput name="recipientAddress" placeholder="Address" />
+
+        {!isMultiple && (
+          <MyFormInput
+            name="recipientAddress"
+            placeholder="Recipient Address"
+          />
+        )}
+
+        {isMultiple && (
+          <div className="mb-4">
+            <div className="flex gap-2 mb-2">
+              <input
+                type="text"
+                className="w-full px-4 py-3 md:text-[17px] rounded-md focus:outline-none focus:ring-2 bg-white"
+                placeholder="Recipient Address"
+                value={tempAddress}
+                onChange={(e) => setTempAddress(e.target.value)}
+              />
+              <button
+                type="button"
+                onClick={handleMultipleAddress}
+                className="bg-primary text-white px-4 rounded-md"
+              >
+                Add
+              </button>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {recipientAddresses.map((addr, idx) => (
+                <div
+                  key={idx}
+                  className="flex items-center bg-primary/15 px-2 py-1 rounded-md text-primary"
+                >
+                  <span>{addr}</span>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setRecipientAddresses((prev) =>
+                        prev.filter((_, i) => i !== idx)
+                      )
+                    }
+                    className="ml-2 text-red-500"
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div className="inline-block">
           <label className="text-sm font-medium">
             <input
