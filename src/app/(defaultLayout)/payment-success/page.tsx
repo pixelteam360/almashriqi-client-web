@@ -2,7 +2,7 @@ import Link from "next/link";
 
 const page = () => {
   return (
-    <div className="flex flex-col w-full h-screen justify-center items-center gap-5">
+    <div className="flex flex-col w-full h-full my-20 justify-center items-center gap-5">
       <h2 className="text-primary text-2xl font-semibold">
         Payment SuccessFull
       </h2>

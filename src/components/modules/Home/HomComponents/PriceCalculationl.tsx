@@ -6,13 +6,14 @@ import { toast } from "sonner";
 import { FieldValues } from "react-hook-form";
 import Link from "next/link";
 import { AlarmClock, CarFront, MapPin, Weight } from "lucide-react";
-
 import MyFormWrapper from "@/components/form/MyFormWrapper";
 import MyFormInput from "@/components/form/MyFormInput";
 import MyFormSelect from "@/components/form/MyFormSelect";
 import Spinner from "@/components/common/Spinner";
 import { serviceType, timeType } from "@/constants/common";
 import { useCalculatePriceMutation } from "@/redux/features/common/commonApi";
+import { useAppDispatch } from "@/redux/hooks";
+import { setDeliveryData } from "@/redux/features/common/commonSlice";
 
 const PriceCalculationl = () => {
   const [isReturnTrip, setIsReturnTrip] = useState(false);
@@ -20,8 +21,9 @@ const PriceCalculationl = () => {
   const [isMultiple, setIsMultiple] = useState(false);
   const [pickup, setPickup] = useState("");
   const [postCodes, setPostCodes] = useState<string[]>([]);
-  const [result, setResult] = useState("");
+  const [result, setResult] = useState<any>();
   const [calculate] = useCalculatePriceMutation();
+  const dispatch = useAppDispatch();
 
   const pickupRef = useRef<HTMLInputElement>(null);
   const deliveryRef = useRef<HTMLInputElement>(null);
@@ -103,7 +105,19 @@ const PriceCalculationl = () => {
 
     try {
       const response = await calculate(payload).unwrap();
-      setResult(response.data.result2);
+      setResult({
+        price: response.data.result2.totalPrice,
+        distance: response.data.result2.totalDistance,
+      });
+      dispatch(
+        setDeliveryData({
+          totalPrice: response.data.result2.totalPrice,
+          totalDistance: response.data.result2.totalDistance,
+          deliveryPostCode: postCodes,
+          pickupPostCode: pickup,
+          service: data.service,
+        })
+      );
       toast.success("Calculation successful", { id: toastId });
     } catch (err: any) {
       toast.error(err?.data?.message || "Failed to calculate", { id: toastId });
@@ -295,10 +309,15 @@ const PriceCalculationl = () => {
             <div className="flex md:flex-row flex-col md:items-end items-center gap-6">
               <div className="space-y-2 md:text-start text-center">
                 <p>Result</p>
-                <h3 className="text-xl text-primary font-bold">{result}£</h3>
+                <h3 className="text-xl text-primary font-bold">
+                  {result.price}£
+                </h3>
               </div>
               <Link
-                href={{ pathname: "/delivery-form", query: { price: result } }}
+                href={{
+                  pathname: "/delivery-form",
+                  query: { price: result.price, distance: result.distance },
+                }}
                 className="text-primary underline "
               >
                 Proceed to payment

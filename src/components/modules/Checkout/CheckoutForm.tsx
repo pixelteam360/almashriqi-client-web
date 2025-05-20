@@ -13,6 +13,7 @@ interface PaymentIntentResponse {
 
 const CheckoutForm = () => {
   const price = useSearchParams().get("price");
+  const distance = useSearchParams().get("distance");
   const requestId = useSearchParams().get("id");
   const stripe = useStripe();
   const elements = useElements();
@@ -60,6 +61,7 @@ const CheckoutForm = () => {
           orderId: requestId,
           paymentInt: result.paymentIntent.id,
           amount: priceInt,
+          distance: distance,
         }).unwrap();
         window.location.href = "/payment-success";
       }
@@ -74,7 +76,7 @@ const CheckoutForm = () => {
     style: {
       base: {
         fontSize: "16px",
-        color: "#424770", 
+        color: "#424770",
         "::placeholder": {
           color: "#aab7c4",
         },

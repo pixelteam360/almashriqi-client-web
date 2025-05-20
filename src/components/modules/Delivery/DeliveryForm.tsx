@@ -1,18 +1,20 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import { Autocomplete, useLoadScript } from "@react-google-maps/api";
+import { useLoadScript } from "@react-google-maps/api";
 import MyBtn from "@/components/common/MyBtn";
 import MyFormInput from "@/components/form/MyFormInput";
 import MyFormSelect from "@/components/form/MyFormSelect";
 import MyFormWrapper from "@/components/form/MyFormWrapper";
-import { serviceType, timeType } from "@/constants/common";
+import { timeType } from "@/constants/common";
 import { useDeliveryMutation } from "@/redux/features/common/commonApi";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useRef, useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import Spinner from "@/components/common/Spinner";
+import { useAppSelector } from "@/redux/hooks";
+import { getdeliveryData } from "@/redux/features/common/commonSlice";
+import Link from "next/link";
 
 interface Recipient {
   recipientName: string;
@@ -25,21 +27,8 @@ interface Recipient {
 const DeliveryForm = () => {
   const router = useRouter();
   const price = useSearchParams().get("price");
-  const [recipients, setRecipients] = useState<Recipient[]>([
-    {
-      recipientName: "",
-      recipientMobile: "",
-      recipientEmail: "",
-      recipientPostCode: "",
-      recipientAddress: "",
-    },
-  ]);
-  const [pickup, setPickup] = useState("");
+  const distance = useSearchParams().get("distance");
   const pickupRef = useRef<HTMLInputElement>(null);
-  const pickupAutoRef = useRef<google.maps.places.Autocomplete | null>(null);
-  const deliveryAutoRefs = useRef<(google.maps.places.Autocomplete | null)[]>(
-    []
-  );
   const deliveryInputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_API_KEY || "",
@@ -47,86 +36,17 @@ const DeliveryForm = () => {
   });
   const [delivery] = useDeliveryMutation();
   const { setValue } = useForm<FieldValues>();
+  const deliveryData = useAppSelector(getdeliveryData);
 
-  const extractPostcode = (
-    place: google.maps.places.PlaceResult
-  ): string | null => {
-    const component = place.address_components?.find((c) =>
-      c.types.includes("postal_code")
-    );
-    return component?.long_name?.toUpperCase() || null;
-  };
+  const recipient = deliveryData.deliveryPostCode.map((item) => ({
+    recipientName: "",
+    recipientMobile: "",
+    recipientEmail: "",
+    recipientPostCode: item,
+    recipientAddress: "",
+  }));
 
-  const handlePlaceSelect = (type: "pickup" | "delivery", index?: number) => {
-    if (type === "pickup") {
-      const place = pickupAutoRef.current?.getPlace();
-      if (!place || !place.address_components) {
-        toast.error("Please select a valid UK postcode");
-        return;
-      }
-      const postcode = extractPostcode(place);
-      if (!postcode) {
-        toast.error("No postcode found");
-        return;
-      }
-      setPickup(postcode);
-      if (pickupRef.current) {
-        pickupRef.current.value = postcode;
-      }
-    } else if (typeof index === "number") {
-      const place = deliveryAutoRefs.current[index]?.getPlace();
-      if (!place || !place.address_components) {
-        toast.error("Please select a valid UK postcode");
-        return;
-      }
-      const postcode = extractPostcode(place);
-      if (!postcode) {
-        toast.error("No postcode found");
-        return;
-      }
-      if (recipients.some((r) => r.recipientPostCode === postcode)) {
-        toast.warning("This postcode is already added");
-        return;
-      }
-      const updatedRecipients = [...recipients];
-      updatedRecipients[index].recipientPostCode = postcode;
-      setRecipients(updatedRecipients);
-      setValue(`recipients[${index}].recipientPostCode`, postcode);
-      if (deliveryInputRefs.current[index]) {
-        deliveryInputRefs.current[index]!.value = postcode;
-      }
-    }
-  };
-
-  const addRecipient = () => {
-    setRecipients([
-      ...recipients,
-      {
-        recipientName: "",
-        recipientMobile: "",
-        recipientEmail: "",
-        recipientPostCode: "",
-        recipientAddress: "",
-      },
-    ]);
-
-    deliveryAutoRefs.current.push(null);
-    deliveryInputRefs.current.push(null);
-  };
-
-  const removeRecipient = (index: number) => {
-    if (recipients.length === 1) {
-      toast.error("At least one recipient is required");
-      return;
-    }
-    setRecipients(recipients.filter((_, i) => i !== index));
-    deliveryAutoRefs.current = deliveryAutoRefs.current.filter(
-      (_, i) => i !== index
-    );
-    deliveryInputRefs.current = deliveryInputRefs.current.filter(
-      (_, i) => i !== index
-    );
-  };
+  const [recipients, setRecipients] = useState<Recipient[]>(recipient);
 
   const handleRecipientChange = (
     index: number,
@@ -142,14 +62,13 @@ const DeliveryForm = () => {
   const handleSubmit = async (data: FieldValues) => {
     const toastId = toast.loading("Uploading...");
 
-    const { toAvgDeliveryTime, toavgCollectionTime, ...restData } = data;
-
     const date = new Date(data.preferredCollectionDate).toISOString();
     const packageWeight = parseInt(data.packageWeight, 10);
 
     const payload = {
-      ...restData,
-      pickupPostCode: pickup,
+      ...data,
+      pickupPostCode: deliveryData.pickupPostCode,
+      serviceType: deliveryData.service,
       recipients: recipients.map((recipient) => ({
         ...recipient,
       })),
@@ -157,13 +76,13 @@ const DeliveryForm = () => {
       packageWeight,
     };
 
-    console.log(payload);
-
     try {
       const res = await delivery(payload).unwrap();
       if (res) {
         toast.success("Uploaded successfully", { id: toastId });
-        router.push(`/checkout?price=${price}&id=${res?.data?.id}`);
+        router.push(
+          `/checkout?price=${price}&distance=${distance}&id=${res?.data?.id}`
+        );
       }
     } catch (err: any) {
       toast.error(err.data?.message || "Failed to upload", { id: toastId });
@@ -172,6 +91,19 @@ const DeliveryForm = () => {
 
   if (!isLoaded) return <Spinner />;
 
+  if (deliveryData.deliveryPostCode.length < 1) {
+    return (
+      <div className="flex flex-col gap-7 justify-center items-center mt-12">
+        <h3 className="text-xl font-medium text-primary">
+          Please Calculate the price first
+        </h3>
+        <Link href={"/"}>
+          <MyBtn name="Go To Home" />
+        </Link>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-3xl mx-auto md:px-5 md:my-12 my-5">
       <MyFormWrapper onSubmit={handleSubmit}>
@@ -179,21 +111,14 @@ const DeliveryForm = () => {
         <MyFormInput name="pickupName" placeholder="Name" />
         <MyFormInput name="pickupMobile" placeholder="Mobile Number" />
         <MyFormInput name="pickupEmail" placeholder="Email" />
-        <Autocomplete
-          onLoad={(autocomplete) => (pickupAutoRef.current = autocomplete)}
-          onPlaceChanged={() => handlePlaceSelect("pickup")}
-          options={{
-            componentRestrictions: { country: "uk" },
-            types: ["postal_code"],
-          }}
-        >
-          <input
-            ref={pickupRef}
-            name="pickup"
-            className="w-full px-4 py-3 md:text-[17px] rounded-md focus:outline-none focus:ring-2 bg-white mb-4"
-            placeholder="Post Code"
-          />
-        </Autocomplete>
+        <input
+          ref={pickupRef}
+          defaultValue={deliveryData.pickupPostCode}
+          disabled={true}
+          name="pickup"
+          className="w-full px-4 py-3 md:text-[17px] rounded-md focus:outline-none focus:ring-2 bg-white mb-4"
+          placeholder="Post Code"
+        />
         <MyFormInput name="pickupAddress" placeholder="Address" />
 
         {/* ========================= Recipient Information Start =================== */}
@@ -201,15 +126,7 @@ const DeliveryForm = () => {
         {recipients.map((recipient, index) => (
           <div key={index} className="border p-4 mb-4 rounded-md relative">
             <p className="text-lg font-medium mb-2">Recipient {index + 1}</p>
-            {index > 0 && (
-              <button
-                type="button"
-                onClick={() => removeRecipient(index)}
-                className="absolute top-2 right-2 text-red-500 hover:text-red-700"
-              >
-                Remove
-              </button>
-            )}
+
             <input
               name={`recipients[${index}].recipientName`}
               className="w-full px-4 py-3 md:text-[17px] rounded-md focus:outline-none focus:ring-2 bg-white mb-4"
@@ -234,32 +151,16 @@ const DeliveryForm = () => {
                 handleRecipientChange(index, "recipientEmail", e.target.value)
               }
             />
-            <Autocomplete
-              onLoad={(autocomplete) =>
-                (deliveryAutoRefs.current[index] = autocomplete)
-              }
-              onPlaceChanged={() => handlePlaceSelect("delivery", index)}
-              options={{
-                componentRestrictions: { country: "uk" },
-                types: ["postal_code"],
+            <input
+              ref={(el) => {
+                deliveryInputRefs.current[index] = el;
               }}
-            >
-              <input
-                ref={(el) => {
-                  deliveryInputRefs.current[index] = el;
-                }}
-                name={`recipients[${index}].recipientPostCode`}
-                className="w-full px-4 py-3 md:text-[17px] rounded-md focus:outline-none focus:ring-2 bg-white mb-4"
-                placeholder="Post Code"
-                onChange={(e) =>
-                  handleRecipientChange(
-                    index,
-                    "recipientPostCode",
-                    e.target.value
-                  )
-                }
-              />
-            </Autocomplete>
+              defaultValue={recipient.recipientPostCode}
+              disabled={true}
+              name={`recipients[${index}].recipientPostCode`}
+              className="w-full px-4 py-3 md:text-[17px] rounded-md focus:outline-none focus:ring-2 bg-white mb-4"
+              placeholder="Post Code"
+            />
             <input
               name={`recipients[${index}].recipientAddress`}
               className="w-full px-4 py-3 md:text-[17px] rounded-md focus:outline-none focus:ring-2 bg-white mb-4"
@@ -270,18 +171,18 @@ const DeliveryForm = () => {
             />
           </div>
         ))}
-        <button
-          type="button"
-          onClick={addRecipient}
-          className="text-blue-500 hover:text-blue-700 mb-4"
-        >
-          Add another recipient
-        </button>
 
         {/* ========================= Recipient Information End =================== */}
 
         <p className="text-xl font-medium mt-8 mb-3">Type of Service</p>
-        <MyFormSelect name="serviceType" options={serviceType} />
+        <input
+          name={`recipien`}
+          defaultValue={deliveryData.service}
+          disabled={true}
+          className="w-full px-4 py-3 md:text-[17px] rounded-md focus:outline-none focus:ring-2 bg-white mb-4"
+          placeholder="Recipient Address"
+        />
+        {/* <MyFormSelect name="serviceType" options={serviceType} /> */}
 
         <p className="text-xl font-medium mt-8 mb-3">Collection Details</p>
         <MyFormInput
