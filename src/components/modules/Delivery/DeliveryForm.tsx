@@ -10,28 +10,43 @@ import { serviceType, timeType } from "@/constants/common";
 import { useDeliveryMutation } from "@/redux/features/common/commonApi";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useRef, useState } from "react";
-import { FieldValues } from "react-hook-form";
+import { FieldValues, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import Spinner from "@/components/common/Spinner";
+
+interface Recipient {
+  recipientName: string;
+  recipientMobile: string;
+  recipientEmail: string;
+  recipientPostCode: string;
+  recipientAddress: string;
+}
 
 const DeliveryForm = () => {
   const router = useRouter();
   const price = useSearchParams().get("price");
-  const [isMultiple, setIsMultiple] = useState(false);
+  const [recipients, setRecipients] = useState<Recipient[]>([
+    {
+      recipientName: "",
+      recipientMobile: "",
+      recipientEmail: "",
+      recipientPostCode: "",
+      recipientAddress: "",
+    },
+  ]);
   const [pickup, setPickup] = useState("");
-  const [postCodes, setPostCodes] = useState<string[]>([]);
-  const [recipientAddresses, setRecipientAddresses] = useState<string[]>([]);
-  const [tempAddress, setTempAddress] = useState("");
   const pickupRef = useRef<HTMLInputElement>(null);
-  const deliveryRef = useRef<HTMLInputElement>(null);
   const pickupAutoRef = useRef<google.maps.places.Autocomplete | null>(null);
-  const deliveryAutoRef = useRef<google.maps.places.Autocomplete | null>(null);
-  const [delivery] = useDeliveryMutation();
-
+  const deliveryAutoRefs = useRef<(google.maps.places.Autocomplete | null)[]>(
+    []
+  );
+  const deliveryInputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_API_KEY || "",
     libraries: ["places"],
   });
+  const [delivery] = useDeliveryMutation();
+  const { setValue } = useForm<FieldValues>();
 
   const extractPostcode = (
     place: google.maps.places.PlaceResult
@@ -42,40 +57,86 @@ const DeliveryForm = () => {
     return component?.long_name?.toUpperCase() || null;
   };
 
-  const handlePlaceSelect = (type: "pickup" | "delivery") => {
-    const ref = type === "pickup" ? pickupAutoRef : deliveryAutoRef;
-    const place = ref.current?.getPlace();
-
-    if (!place || !place.address_components) {
-      toast.error("Please select a valid UK postcode");
-      return;
-    }
-
-    const postcode = extractPostcode(place);
-    if (!postcode) {
-      toast.error("No postcode found");
-      return;
-    }
-
+  const handlePlaceSelect = (type: "pickup" | "delivery", index?: number) => {
     if (type === "pickup") {
+      const place = pickupAutoRef.current?.getPlace();
+      if (!place || !place.address_components) {
+        toast.error("Please select a valid UK postcode");
+        return;
+      }
+      const postcode = extractPostcode(place);
+      if (!postcode) {
+        toast.error("No postcode found");
+        return;
+      }
       setPickup(postcode);
-    } else {
-      if (!isMultiple) {
-        setPostCodes([postcode]);
-      } else {
-        if (postCodes.includes(postcode)) {
-          toast.warning("This postcode is already added");
-          return;
-        }
-        setPostCodes((prev) => [...prev, postcode]);
-        if (deliveryRef.current) deliveryRef.current.value = "";
+      if (pickupRef.current) {
+        pickupRef.current.value = postcode;
+      }
+    } else if (typeof index === "number") {
+      const place = deliveryAutoRefs.current[index]?.getPlace();
+      if (!place || !place.address_components) {
+        toast.error("Please select a valid UK postcode");
+        return;
+      }
+      const postcode = extractPostcode(place);
+      if (!postcode) {
+        toast.error("No postcode found");
+        return;
+      }
+      if (recipients.some((r) => r.recipientPostCode === postcode)) {
+        toast.warning("This postcode is already added");
+        return;
+      }
+      const updatedRecipients = [...recipients];
+      updatedRecipients[index].recipientPostCode = postcode;
+      setRecipients(updatedRecipients);
+      setValue(`recipients[${index}].recipientPostCode`, postcode);
+      if (deliveryInputRefs.current[index]) {
+        deliveryInputRefs.current[index]!.value = postcode;
       }
     }
   };
 
-  // Handle removing a postcode
-  const handleRemovePostCode = (code: string) => {
-    setPostCodes(postCodes.filter((item) => item !== code));
+  const addRecipient = () => {
+    setRecipients([
+      ...recipients,
+      {
+        recipientName: "",
+        recipientMobile: "",
+        recipientEmail: "",
+        recipientPostCode: "",
+        recipientAddress: "",
+      },
+    ]);
+
+    deliveryAutoRefs.current.push(null);
+    deliveryInputRefs.current.push(null);
+  };
+
+  const removeRecipient = (index: number) => {
+    if (recipients.length === 1) {
+      toast.error("At least one recipient is required");
+      return;
+    }
+    setRecipients(recipients.filter((_, i) => i !== index));
+    deliveryAutoRefs.current = deliveryAutoRefs.current.filter(
+      (_, i) => i !== index
+    );
+    deliveryInputRefs.current = deliveryInputRefs.current.filter(
+      (_, i) => i !== index
+    );
+  };
+
+  const handleRecipientChange = (
+    index: number,
+    field: keyof Recipient,
+    value: string
+  ) => {
+    const updatedRecipients = [...recipients];
+    updatedRecipients[index][field] = value;
+    setRecipients(updatedRecipients);
+    setValue(`recipients[${index}].${field}`, value);
   };
 
   const handleSubmit = async (data: FieldValues) => {
@@ -84,50 +145,29 @@ const DeliveryForm = () => {
     const { toAvgDeliveryTime, toavgCollectionTime, ...restData } = data;
 
     const date = new Date(data.preferredCollectionDate).toISOString();
-
     const packageWeight = parseInt(data.packageWeight, 10);
 
-    const recipientAddress = recipientAddresses || [data.recipientAddress];
-
-    console.log({
+    const payload = {
       ...restData,
       pickupPostCode: pickup,
-      recipientPostCode: postCodes,
+      recipients: recipients.map((recipient) => ({
+        ...recipient,
+      })),
       preferredCollectionDate: date,
       packageWeight,
-      recipientAddress,
-    });
+    };
+
+    console.log(payload);
 
     try {
-      const res = await delivery({
-        ...restData,
-        pickupPostCode: pickup,
-        recipientPostCode: postCodes,
-        preferredCollectionDate: date,
-        packageWeight,
-        recipientAddress,
-      }).unwrap();
-
+      const res = await delivery(payload).unwrap();
       if (res) {
         toast.success("Uploaded successfully", { id: toastId });
         router.push(`/checkout?price=${price}&id=${res?.data?.id}`);
       }
     } catch (err: any) {
-      toast.error(err.data?.message || "Faild to Uplaod", {
-        id: toastId,
-      });
+      toast.error(err.data?.message || "Failed to upload", { id: toastId });
     }
-  };
-
-  const handleMultipleAddress = () => {
-    if (!tempAddress.trim()) return toast.error("Address is required");
-
-    if (recipientAddresses.includes(tempAddress.trim())) {
-      return toast.warning("This address is already added");
-    }
-
-    setRecipientAddresses((prev) => [...prev, tempAddress.trim()]);
-    setTempAddress("");
   };
 
   if (!isLoaded) return <Spinner />;
@@ -154,110 +194,91 @@ const DeliveryForm = () => {
             placeholder="Post Code"
           />
         </Autocomplete>
-
         <MyFormInput name="pickupAddress" placeholder="Address" />
 
+        {/* ========================= Recipient Information Start =================== */}
         <p className="text-xl font-medium mt-8 mb-3">Recipient Information</p>
-        <MyFormInput name="recipientName" placeholder="Name" />
-        <MyFormInput name="recipientMobile" placeholder="Mobile Number" />
-        <MyFormInput name="recipientEmail" placeholder="Email" />
-        <Autocomplete
-          onLoad={(autocomplete) => (deliveryAutoRef.current = autocomplete)}
-          onPlaceChanged={() => handlePlaceSelect("delivery")}
-          options={{
-            componentRestrictions: { country: "uk" },
-            types: ["postal_code"],
-          }}
-        >
-          <input
-            ref={deliveryRef}
-            name="delivery"
-            className="w-full px-4 py-3 md:text-[17px] rounded-md focus:outline-none focus:ring-2 bg-white mb-4"
-            placeholder="Post Code"
-          />
-        </Autocomplete>
-
-        {isMultiple && (
-          <div className="flex flex-wrap gap-2 items-center mb-4">
-            {postCodes.map((item, idx) => (
-              <div
-                key={idx}
-                className="flex items-center bg-primary/15 px-2 rounded-md text-primary"
-              >
-                <span>{item}</span>
-                <button
-                  type="button"
-                  onClick={() => handleRemovePostCode(item)}
-                  className="ml-2 text-red-500"
-                >
-                  ×
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {!isMultiple && (
-          <MyFormInput
-            name="recipientAddress"
-            placeholder="Recipient Address"
-          />
-        )}
-
-        {isMultiple && (
-          <div className="mb-4">
-            <div className="flex gap-2 mb-2">
-              <input
-                type="text"
-                className="w-full px-4 py-3 md:text-[17px] rounded-md focus:outline-none focus:ring-2 bg-white"
-                placeholder="Recipient Address"
-                value={tempAddress}
-                onChange={(e) => setTempAddress(e.target.value)}
-              />
+        {recipients.map((recipient, index) => (
+          <div key={index} className="border p-4 mb-4 rounded-md relative">
+            <p className="text-lg font-medium mb-2">Recipient {index + 1}</p>
+            {index > 0 && (
               <button
                 type="button"
-                onClick={handleMultipleAddress}
-                className="bg-primary text-white px-4 rounded-md"
+                onClick={() => removeRecipient(index)}
+                className="absolute top-2 right-2 text-red-500 hover:text-red-700"
               >
-                Add
+                Remove
               </button>
-            </div>
-
-            <div className="flex flex-wrap gap-2">
-              {recipientAddresses.map((addr, idx) => (
-                <div
-                  key={idx}
-                  className="flex items-center bg-primary/15 px-2 py-1 rounded-md text-primary"
-                >
-                  <span>{addr}</span>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setRecipientAddresses((prev) =>
-                        prev.filter((_, i) => i !== idx)
-                      )
-                    }
-                    className="ml-2 text-red-500"
-                  >
-                    ×
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        <div className="inline-block">
-          <label className="text-sm font-medium">
+            )}
             <input
-              type="checkbox"
-              checked={isMultiple}
-              onChange={() => setIsMultiple(!isMultiple)}
-              className="mr-2"
+              name={`recipients[${index}].recipientName`}
+              className="w-full px-4 py-3 md:text-[17px] rounded-md focus:outline-none focus:ring-2 bg-white mb-4"
+              placeholder="Name"
+              onChange={(e) =>
+                handleRecipientChange(index, "recipientName", e.target.value)
+              }
             />
-            Multiple Delivery Stop
-          </label>
-        </div>
+            <input
+              name={`recipients[${index}].recipientMobile`}
+              className="w-full px-4 py-3 md:text-[17px] rounded-md focus:outline-none focus:ring-2 bg-white mb-4"
+              placeholder="Mobile Number"
+              onChange={(e) =>
+                handleRecipientChange(index, "recipientMobile", e.target.value)
+              }
+            />
+            <input
+              name={`recipients[${index}].recipientEmail`}
+              className="w-full px-4 py-3 md:text-[17px] rounded-md focus:outline-none focus:ring-2 bg-white mb-4"
+              placeholder="Email"
+              onChange={(e) =>
+                handleRecipientChange(index, "recipientEmail", e.target.value)
+              }
+            />
+            <Autocomplete
+              onLoad={(autocomplete) =>
+                (deliveryAutoRefs.current[index] = autocomplete)
+              }
+              onPlaceChanged={() => handlePlaceSelect("delivery", index)}
+              options={{
+                componentRestrictions: { country: "uk" },
+                types: ["postal_code"],
+              }}
+            >
+              <input
+                ref={(el) => {
+                  deliveryInputRefs.current[index] = el;
+                }}
+                name={`recipients[${index}].recipientPostCode`}
+                className="w-full px-4 py-3 md:text-[17px] rounded-md focus:outline-none focus:ring-2 bg-white mb-4"
+                placeholder="Post Code"
+                onChange={(e) =>
+                  handleRecipientChange(
+                    index,
+                    "recipientPostCode",
+                    e.target.value
+                  )
+                }
+              />
+            </Autocomplete>
+            <input
+              name={`recipients[${index}].recipientAddress`}
+              className="w-full px-4 py-3 md:text-[17px] rounded-md focus:outline-none focus:ring-2 bg-white mb-4"
+              placeholder="Recipient Address"
+              onChange={(e) =>
+                handleRecipientChange(index, "recipientAddress", e.target.value)
+              }
+            />
+          </div>
+        ))}
+        <button
+          type="button"
+          onClick={addRecipient}
+          className="text-blue-500 hover:text-blue-700 mb-4"
+        >
+          Add another recipient
+        </button>
+
+        {/* ========================= Recipient Information End =================== */}
 
         <p className="text-xl font-medium mt-8 mb-3">Type of Service</p>
         <MyFormSelect name="serviceType" options={serviceType} />
