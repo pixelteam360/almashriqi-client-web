@@ -4,7 +4,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { HiMenuAlt1 } from "react-icons/hi";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { useState } from "react";
 import { useAppDispatch } from "@/redux/hooks";
 import { useGetMeQuery } from "@/redux/features/auth/authApi";
@@ -65,7 +71,7 @@ const Navbar = () => {
             <HiMenuAlt1 className="text-2xl cursor-pointer text-primary" />
           </SheetTrigger>
           <SheetContent side="left" className=" ">
-          <SheetHeader>
+            <SheetHeader>
               <SheetTitle className="text-lg"></SheetTitle>
             </SheetHeader>
             <nav className="mt-5">
@@ -99,16 +105,12 @@ const Navbar = () => {
                 ) : (
                   <div className="flex md:gap-7 gap-1 w-full">
                     <Link href={"/register"}>
-                      <button
-                        className="border border-primary px-5 md:py-3 py-1 whitespace-nowrap rounded-lg hover:bg-white duration-300 text-primary font-medium"
-                      >
+                      <button className="border border-primary px-5 md:py-3 py-1 whitespace-nowrap rounded-lg hover:bg-white duration-300 text-primary font-medium">
                         Sign Up
                       </button>
                     </Link>
                     <Link href={"/login"}>
-                      <button
-                        className=" bg-primary text-white border border-primary  px-6 md:py-3 py-1 whitespace-nowrap rounded-lg hover:bg-white duration-300 font-medium"
-                      >
+                      <button className=" bg-primary text-white border border-primary  px-6 md:py-3 py-1 whitespace-nowrap rounded-lg hover:bg-white duration-300 font-medium">
                         Log In
                       </button>
                     </Link>
@@ -121,13 +123,15 @@ const Navbar = () => {
       </div>
 
       <div className="flex gap-5 items-center">
-        <Image
-          src={logo}
-          height={120}
-          width={300}
-          alt="logo"
-          className="md:w-28 w-14"
-        />
+        <Link href={"/"}>
+          <Image
+            src={logo}
+            height={120}
+            width={300}
+            alt="logo"
+            className="md:w-28 w-14"
+          />
+        </Link>
       </div>
 
       {/* larg device menu  */}

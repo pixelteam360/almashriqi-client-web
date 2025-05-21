@@ -116,6 +116,7 @@ const PriceCalculationl = () => {
           deliveryPostCode: postCodes,
           pickupPostCode: pickup,
           service: data.service,
+          isReturnTrip: isReturnTrip,
         })
       );
       toast.success("Calculation successful", { id: toastId });

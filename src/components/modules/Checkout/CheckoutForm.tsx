@@ -1,9 +1,13 @@
 "use client";
+import MyBtn from "@/components/common/MyBtn";
 import {
   useAfterPaymentMutation,
   usePaymentMutation,
 } from "@/redux/features/common/commonApi";
+import { getdeliveryData } from "@/redux/features/common/commonSlice";
+import { useAppSelector } from "@/redux/hooks";
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 
@@ -12,7 +16,6 @@ interface PaymentIntentResponse {
 }
 
 const CheckoutForm = () => {
-  const price = useSearchParams().get("price");
   const distance = useSearchParams().get("distance");
   const requestId = useSearchParams().get("id");
   const stripe = useStripe();
@@ -21,8 +24,8 @@ const CheckoutForm = () => {
   const [error, setError] = useState<string | null>(null);
   const [afterPayment] = useAfterPaymentMutation();
   const [payment] = usePaymentMutation();
-
-  const priceInt = parseInt(price!, 10);
+  const deliveryData = useAppSelector(getdeliveryData);
+  console.log(deliveryData);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -36,7 +39,7 @@ const CheckoutForm = () => {
     setLoading(true);
 
     try {
-      const res = await payment({ amount: price }).unwrap();
+      const res = await payment({ amount: deliveryData.totalPrice }).unwrap();
 
       if (!res) {
         throw new Error("Failed to create PaymentIntent");
@@ -60,8 +63,9 @@ const CheckoutForm = () => {
         await afterPayment({
           orderId: requestId,
           paymentInt: result.paymentIntent.id,
-          amount: priceInt,
+          amount: deliveryData.totalPrice,
           distance: distance,
+          isReturnTrip: deliveryData.isReturnTrip,
         }).unwrap();
         window.location.href = "/payment-success";
       }
@@ -87,6 +91,19 @@ const CheckoutForm = () => {
     },
   };
 
+  if (deliveryData.deliveryPostCode.length < 1) {
+    return (
+      <div className="flex flex-col gap-7 justify-center items-center mt-12">
+        <h3 className="text-xl font-medium text-primary">
+          Please Calculate the price first
+        </h3>
+        <Link href={"/"}>
+          <MyBtn name="Go To Home" />
+        </Link>
+      </div>
+    );
+  }
+
   return (
     <form
       onSubmit={handleSubmit}
@@ -103,7 +120,7 @@ const CheckoutForm = () => {
           loading ? "bg-gray-400" : "bg-blue-600 hover:bg-blue-700"
         }`}
       >
-        {loading ? "Processing..." : `Pay ${price}£`}
+        {loading ? "Processing..." : `Pay ${deliveryData.totalPrice}£`}
       </button>
     </form>
   );

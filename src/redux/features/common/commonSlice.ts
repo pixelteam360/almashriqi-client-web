@@ -7,6 +7,7 @@ type TdeliveryDetails = {
   deliveryPostCode: string[];
   pickupPostCode: string;
   service: string;
+  isReturnTrip: boolean;
 };
 const initialState: TdeliveryDetails = {
   totalPrice: "",
@@ -14,6 +15,7 @@ const initialState: TdeliveryDetails = {
   deliveryPostCode: [],
   pickupPostCode: "",
   service: "",
+  isReturnTrip: false,
 };
 
 const commonSlice = createSlice({
@@ -27,12 +29,14 @@ const commonSlice = createSlice({
         deliveryPostCode,
         pickupPostCode,
         service,
+        isReturnTrip,
       } = action.payload;
       state.totalPrice = totalPrice;
       state.totalDistance = totalDistance;
       state.deliveryPostCode = deliveryPostCode;
       state.pickupPostCode = pickupPostCode;
       state.service = service;
+      state.isReturnTrip = isReturnTrip;
     },
   },
 });

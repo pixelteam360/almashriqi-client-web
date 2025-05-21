@@ -121,6 +121,10 @@ const DeliveryForm = () => {
         />
         <MyFormInput name="pickupAddress" placeholder="Address" />
 
+        {deliveryData?.isReturnTrip && (
+          <p className="text-primary font-semibold">This delivery will return to the same pickup address once again.</p>
+        )}
+
         {/* ========================= Recipient Information Start =================== */}
         <p className="text-xl font-medium mt-8 mb-3">Recipient Information</p>
         {recipients.map((recipient, index) => (
