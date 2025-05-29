@@ -1,18 +1,34 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import MyBtn from "@/components/common/MyBtn";
 import MyTitle from "@/components/common/MyTitle";
 import MyFormInput from "@/components/form/MyFormInput";
 import MyFormWrapper from "@/components/form/MyFormWrapper";
+import { useSendMailToAdminMutation } from "@/redux/features/common/commonApi";
 import { Mail, MapPin, PhoneCall } from "lucide-react";
 import Link from "next/link";
 import { FieldValues } from "react-hook-form";
 import { FaInstagramSquare, FaTwitter } from "react-icons/fa";
 import { FaFacebookF } from "react-icons/fa6";
 import { RiWhatsappFill } from "react-icons/ri";
+import { toast } from "sonner";
 
 const ContactUs = () => {
-  const handleSubmit = (data: FieldValues) => {
-    console.log(data);
+  const [sendMail] = useSendMailToAdminMutation();
+  
+  const handleSubmit = async (data: FieldValues) => {
+    const toastId = toast.loading("Sending...");
+
+    try {
+      const res = await sendMail(data).unwrap();
+      if (res) {
+        toast.success("Sendet successfully", { id: toastId });
+      }
+    } catch (err: any) {
+      toast.error(err.data?.message || "Faild to Send", {
+        id: toastId,
+      });
+    }
   };
   return (
     <div className="md:mt-20 mt-8">
@@ -67,46 +83,46 @@ const ContactUs = () => {
           <MyFormWrapper onSubmit={handleSubmit}>
             <div className="grid md:grid-cols-2 gap-6">
               <MyFormInput
-                name="name"
+                name="firstName"
                 inputClassName="border-b border-[#8D8D8D] bg-transparent rounded-none"
                 label="First Name"
                 labelClassName="!text-sm"
               />
               <MyFormInput
-                name="name"
+                name="lastName"
                 inputClassName="border-b border-[#8D8D8D] bg-transparent rounded-none"
                 label="Last Name"
                 labelClassName="!text-sm"
               />
               <MyFormInput
-                name="name"
+                name="email"
                 type="email"
                 inputClassName="border-b border-[#8D8D8D] bg-transparent rounded-none"
                 label="Email"
                 labelClassName="!text-sm"
               />
               <MyFormInput
-                name="name"
+                name="phone"
                 inputClassName="border-b border-[#8D8D8D] bg-transparent rounded-none"
                 label="Phone Number"
                 labelClassName="!text-sm"
               />
             </div>
             <MyFormInput
-              name="name"
+              name="subject"
               inputClassName="border-b border-[#8D8D8D] bg-transparent rounded-none"
               label="Select Subject?"
               labelClassName="!text-sm"
             />
             <MyFormInput
-              name="name"
+              name="message"
               type="textarea"
               inputClassName="border-b border-[#8D8D8D] bg-transparent rounded-none"
               label="Message"
               labelClassName="!text-sm"
             />
             <div className="flex justify-end mt-5">
-                <MyBtn name="Send Message"/>
+              <MyBtn name="Send Message" />
             </div>
           </MyFormWrapper>
         </div>

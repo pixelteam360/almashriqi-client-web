@@ -33,6 +33,14 @@ export const authApi = baseApi.injectEndpoints({
         body: data,
       }),
     }),
+
+    sendMailToAdmin: builder.mutation({
+      query: (data) => ({
+        url: "/users/contact-mail",
+        method: "POST",
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -41,4 +49,5 @@ export const {
   usePaymentMutation,
   useDeliveryMutation,
   useAfterPaymentMutation,
+  useSendMailToAdminMutation,
 } = authApi;
