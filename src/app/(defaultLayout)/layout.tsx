@@ -16,7 +16,7 @@ const CommonLayout = ({ children }: { children: React.ReactNode }) => {
         <header>
           <Navbar />
         </header>
-        <div className="max-w-[1372px] mx-auto md:py-5 md:px-0 px-3">
+        <div >
           {children}
         </div>
       </MyContainer>

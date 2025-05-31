@@ -8,14 +8,14 @@ import { useSendMailToAdminMutation } from "@/redux/features/common/commonApi";
 import { Mail, MapPin, PhoneCall } from "lucide-react";
 import Link from "next/link";
 import { FieldValues } from "react-hook-form";
-import { FaInstagramSquare, FaTwitter } from "react-icons/fa";
 import { FaFacebookF } from "react-icons/fa6";
 import { RiWhatsappFill } from "react-icons/ri";
+import { SiTrustpilot } from "react-icons/si";
 import { toast } from "sonner";
 
 const ContactUs = () => {
   const [sendMail] = useSendMailToAdminMutation();
-  
+
   const handleSubmit = async (data: FieldValues) => {
     const toastId = toast.loading("Sending...");
 
@@ -39,8 +39,8 @@ const ContactUs = () => {
         </p>
       </div>
 
-      <div className="bg-white p-4 flex md:gap-7 gap-4 rounded-xl md:mt-16 mt-6">
-        <div className="bg-primary rounded-xl md:w-5/12 md:p-9 p-5  text-white">
+      <div className="bg-white md:p-4 p-2 flex md:flex-row flex-col-reverse md:gap-7 gap-4 rounded-xl md:mt-16 mt-6">
+        <div className="bg-primary rounded-xl md:w-5/12 w-full md:p-9 p-3  text-white">
           <div className="space-y-4">
             <h3 className="text-[28px] ">Contact Information</h3>
             <p className="text-[#C9C9C9]">
@@ -63,23 +63,28 @@ const ContactUs = () => {
 
           <div className="md:mt-24 mt-7">
             <ul className="flex gap-4">
-              <Link href={""}>
+              <Link
+                href={
+                  "https://www.facebook.com/share/192Um3f12V/?mibextid=wwXIfr"
+                }
+                target="_blank"
+              >
                 <FaFacebookF className="w-12 h-12 rounded-full bg-white text-primary p-3" />{" "}
               </Link>
-              <Link href={""}>
-                <FaTwitter className="w-12 h-12 rounded-full bg-white text-primary p-3" />
-              </Link>
-              <Link href={""}>
+              <Link href={"https://wa.me/447311121217"} target="_blank">
                 <RiWhatsappFill className="w-12 h-12 rounded-full bg-white text-primary p-3" />
               </Link>
-              <Link href={""}>
-                <FaInstagramSquare className="w-12 h-12 rounded-full bg-white text-primary p-3" />
+              <Link
+                href={"https://uk.trustpilot.com/review/runcourier.co.uk"}
+                target="_blank"
+              >
+                <SiTrustpilot className="w-12 h-12 rounded-full bg-white text-primary p-3" />
               </Link>
             </ul>
           </div>
         </div>
 
-        <div className="md:w-7/12 p-7">
+        <div className="md:w-7/12 w-full md:p-7 p-3">
           <MyFormWrapper onSubmit={handleSubmit}>
             <div className="grid md:grid-cols-2 gap-6">
               <MyFormInput
@@ -121,7 +126,7 @@ const ContactUs = () => {
               label="Message"
               labelClassName="!text-sm"
             />
-            <div className="flex justify-end mt-5">
+            <div className="flex md:justify-end justify-center mt-5">
               <MyBtn name="Send Message" />
             </div>
           </MyFormWrapper>
