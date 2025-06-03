@@ -40,12 +40,13 @@ const FooterBar = () => {
           </div>
 
           <div className="space-y-6">
-            <h2 className="text-lg font-bold">Legal</h2>
+            <h2 className="text-lg font-bold">Legal Pages</h2>
 
             <ul className="flex flex-col gap-1">
               <Link href={"/terms-privacy"}>Terms & Conditions</Link>
               <Link href={"/privacy-policy"}>Privacy Policy</Link>
               <Link href={"/driver-privacy-policy"}>Driver Privacy Policy</Link>
+              <Link href={"/same-day-delivery"}>Same Day Delivery</Link>
             </ul>
           </div>
 
