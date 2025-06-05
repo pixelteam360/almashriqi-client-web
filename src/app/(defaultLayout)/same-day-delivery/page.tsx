@@ -42,7 +42,7 @@ const page = () => {
       <ul className="list-disc pl-6 mb-4 space-y-1">
         <li>
           The driver will wait up to 10 minutes for free, and then charge £5 per
-          15-minute block (as per Waiting Time Policy).
+          10-minute block (as per Waiting Time Policy).
         </li>
         <li>The driver must attempt to contact the recipient via phone.</li>
         <li>
