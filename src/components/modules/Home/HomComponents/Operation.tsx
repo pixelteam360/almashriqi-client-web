@@ -1,9 +1,9 @@
 import SectionTitle from "@/components/common/SectionTitle";
 import Image from "next/image";
 import carLogo from "../../../../assets/images/car-logo.png";
-import home1 from "../../../../assets/images/home1.png";
-import home2 from "../../../../assets/images/home2.png";
-import home3 from "../../../../assets/images/home3.png";
+import home1 from "../../../../assets/images/416B9755-8B1D-46F1-92F5-4C7D35CB4DF7.jpeg";
+import home2 from "../../../../assets/images/smallVan.jpeg";
+import home3 from "../../../../assets/images/F455E006-C8E3-4889-9953-FC8C06A1D209.jpeg";
 import arrow1 from "../../../../assets/images/Vector2.png";
 import arrow2 from "../../../../assets/images/Vector3.png";
 import MyTitle from "@/components/common/MyTitle";
@@ -37,7 +37,7 @@ const Operation = () => {
             alt="image"
             height={500}
             width={500}
-            className="w-96"
+            className="w-80 h-80 rounded-full"
           />
         </div>
 
@@ -47,7 +47,7 @@ const Operation = () => {
             alt="image"
             height={500}
             width={500}
-            className="w-96"
+            className="w-80 h-80 rounded-full"
           />
         </div>
 
@@ -99,7 +99,7 @@ const Operation = () => {
             alt="image"
             height={500}
             width={500}
-            className="w-96"
+            className="w-80 h-80 rounded-full"
           />
         </div>
       </div>

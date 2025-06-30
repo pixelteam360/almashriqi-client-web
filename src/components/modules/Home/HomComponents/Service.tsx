@@ -1,9 +1,9 @@
 import SectionTitle from "@/components/common/SectionTitle";
 import carLogo from "../../../../assets/images/car-logo.png";
-import bike from "../../../../assets/images/bike.png";
-import car from "../../../../assets/images/car.png";
-import smallVan from "../../../../assets/images/small-van.png";
-import mediumVan from "../../../../assets/images/medium-van.png";
+import bike from "../../../../assets/images/motoBike.jpeg";
+import car from "../../../../assets/images/car.jpeg";
+import smallVan from "../../../../assets/images/smallVan.jpeg";
+import mediumVan from "../../../../assets/images/mediunVan.jpeg";
 import Image from "next/image";
 import MyTitle from "@/components/common/MyTitle";
 import MyBtn from "@/components/common/MyBtn";
@@ -24,7 +24,7 @@ const Service = () => {
             width={500}
             height={500}
             alt="image"
-            className="w-full h-48"
+            className="w-full h-48 rounded-xl"
           />
           <MyTitle title="Moto bike" />
           <p className="text-[#525050] md:text-start text-center">
@@ -38,7 +38,7 @@ const Service = () => {
             width={500}
             height={500}
             alt="image"
-            className="w-full h-48"
+            className="w-full h-48 rounded-xl"
           />
           <MyTitle title="Car" />
           <p className="text-[#525050] md:text-start text-center">
@@ -53,7 +53,7 @@ const Service = () => {
             width={500}
             height={500}
             alt="image"
-            className="w-full h-48"
+            className="w-full h-48 rounded-xl"
           />
           <MyTitle title="Small Van" />
           <p className="text-[#525050] md:text-start text-center">
@@ -67,7 +67,7 @@ const Service = () => {
             width={500}
             height={500}
             alt="image"
-            className="w-full h-48"
+            className="w-full h-48 rounded-xl"
           />
           <MyTitle title="Medium Van" />
           <p className="text-[#525050] md:text-start text-center">
