@@ -4,7 +4,7 @@ import MyFormInput from "@/components/form/MyFormInput";
 import MyFormWrapper from "@/components/form/MyFormWrapper";
 import Image from "next/image";
 import { FieldValues } from "react-hook-form";
-import car from "../../../assets/images/login.png";
+import car from "../../../assets/images/run-courier.png";
 import MyBtn from "@/components/common/MyBtn";
 import { useLoginMutation } from "@/redux/features/auth/authApi";
 import { toast } from "sonner";
@@ -40,7 +40,7 @@ const LoginForm = () => {
     }
   };
   return (
-    <div className="max-w-2xl mx-auto h-screen flex justify-center items-center md:mp-12 py-6">
+    <div className="max-w-2xl mx-auto h-screen flex justify-center items-center px-6">
       <div className="space-y-6 w-full">
         <div className="flex justify-center">
           <Image
@@ -48,7 +48,7 @@ const LoginForm = () => {
             alt="image"
             height={1000}
             width={1000}
-            className="w-[450px]"
+            className="md:w-[350px] w-40"
           />
         </div>
         <h1 className="text-center md:text-5xl text-2xl font-bold">Sign Up</h1>
