@@ -41,22 +41,38 @@ const LoginForm = () => {
   };
   return (
     <div className="max-w-2xl mx-auto h-screen flex justify-center items-center px-6">
-      <div className="space-y-6 w-full">
+      <div className="space-y-6 w-full py-8">
         <div className="flex justify-center">
           <Image
             src={car}
             alt="image"
             height={1000}
             width={1000}
-            className="md:w-[350px] w-40"
+            className="md:w-[300px] w-40"
           />
         </div>
-        <h1 className="text-center md:text-5xl text-2xl font-bold">Sign Up</h1>
+        <h1 className="text-center md:text-3xl text-2xl font-bold">Sign In</h1>
         <MyFormWrapper onSubmit={handleSubmit}>
-          <MyFormInput name="email" type="email" label="Email" inputClassName="bg-[#f6f6f6]" />
-          <MyFormInput name="password" type="password" label="Password" inputClassName="bg-[#f6f6f6]" />
-          <div className="flex justify-end mb-5">
-            <Link href={"forgot-password"} className="text-primary font-semibold ">
+          <MyFormInput
+            name="email"
+            type="email"
+            label="Email"
+            inputClassName="bg-[#f6f6f6]"
+          />
+          <MyFormInput
+            name="password"
+            type="password"
+            label="Password"
+            inputClassName="bg-[#f6f6f6]"
+          />
+          <div className="flex justify-between mb-5">
+            <Link href={"/register"} className="text-primary font-semibold ">
+              Register
+            </Link>
+            <Link
+              href={"/forgot-password"}
+              className="text-primary font-semibold "
+            >
               Forgot password?
             </Link>
           </div>

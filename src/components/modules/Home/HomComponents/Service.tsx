@@ -1,5 +1,5 @@
 import SectionTitle from "@/components/common/SectionTitle";
-import carLogo from "../../../../assets/images/car-logo.png";
+import carLogo from "../../../../assets/images/minilogo.png";
 import bike from "../../../../assets/images/motoBike.jpeg";
 import car from "../../../../assets/images/car.jpeg";
 import smallVan from "../../../../assets/images/smallVan.jpeg";
@@ -14,7 +14,7 @@ const Service = () => {
       <div className="flex md:flex-row flex-col-reverse md:gap-3 gap-2 justify-between items-center">
         <SectionTitle main="Services" sub="we offer" />
 
-        <Image src={carLogo} alt="logo" height={150} width={150} />
+        <Image src={carLogo} alt="logo" height={100} width={100} className="bg-white rounded-full shadow-md"/>
       </div>
 
       <div className="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 md:gap-7 gap-4">

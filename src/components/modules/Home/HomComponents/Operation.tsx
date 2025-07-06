@@ -1,6 +1,6 @@
 import SectionTitle from "@/components/common/SectionTitle";
 import Image from "next/image";
-import carLogo from "../../../../assets/images/car-logo.png";
+import carLogo from "../../../../assets/images/minilogo.png";
 import home1 from "../../../../assets/images/416B9755-8B1D-46F1-92F5-4C7D35CB4DF7.jpeg";
 import home2 from "../../../../assets/images/smallVan.jpeg";
 import home3 from "../../../../assets/images/F455E006-C8E3-4889-9953-FC8C06A1D209.jpeg";
@@ -12,7 +12,13 @@ const Operation = () => {
   return (
     <div>
       <div className="flex md:flex-row flex-col md:gap-3 gap-2 justify-between items-center">
-        <Image src={carLogo} alt="logo" height={150} width={150} />
+        <Image
+          src={carLogo}
+          alt="logo"
+          height={100}
+          width={100}
+          className="bg-white rounded-full shadow-md"
+        />
         <SectionTitle main="Operation" sub="Mode" />
         <div></div>
       </div>
