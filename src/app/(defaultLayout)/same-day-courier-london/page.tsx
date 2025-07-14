@@ -57,7 +57,7 @@ const page = () => {
       </p>
       <p>
         <Link href="/contact-us">Click here to get a quote</Link> or{" "}
-        <a href="/contact.html">contact us</a> directly.
+        <Link href="/contact-us">contact us</Link> directly.
       </p>
     </div>
   );
