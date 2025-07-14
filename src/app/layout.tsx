@@ -13,7 +13,8 @@ const lato = Lato({
 
 export const metadata: Metadata = {
   title: "Run Courier",
-  description: "Run Courier",
+  description:
+    "Run Courier provides same day courier services in London. Fast, affordable delivery for medical, retail, legal, and multi-drop jobs across Greater London and beyond.",
 };
 
 export default function RootLayout({

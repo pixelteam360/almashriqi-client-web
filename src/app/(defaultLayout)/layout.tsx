@@ -5,9 +5,9 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Run Courier",
-  description: "Run Courier",
+  description:
+    "Run Courier provides same day courier services in London. Fast, affordable delivery for medical, retail, legal, and multi-drop jobs across Greater London and beyond.",
 };
-
 
 const CommonLayout = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -16,9 +16,7 @@ const CommonLayout = ({ children }: { children: React.ReactNode }) => {
         <header>
           <Navbar />
         </header>
-        <div >
-          {children}
-        </div>
+        <div>{children}</div>
       </MyContainer>
       <footer>
         <FooterBar />
