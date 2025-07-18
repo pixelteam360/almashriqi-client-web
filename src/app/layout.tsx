@@ -41,6 +41,29 @@ export default function RootLayout({
           `}
         </Script>
 
+        {/* Google Ads global site tag */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=AW-17051034778"
+          strategy="afterInteractive"
+        />
+        <Script id="gtag-init" strategy="afterInteractive">
+          {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'AW-17051034778');
+        `}
+        </Script>
+
+        {/* Conversion event (optional — trigger manually when needed) */}
+        <Script id="gtag-conversion" strategy="afterInteractive">
+          {`
+          gtag('event', 'conversion', {
+            send_to: 'AW-17051034778/SuAjCL-r7_EaEJrJyMI_'
+          });
+        `}
+        </Script>
+
         {/* Optional: Conversion event trigger (can also be triggered on specific actions) */}
         <Script id="gtag-conversion" strategy="afterInteractive">
           {`
